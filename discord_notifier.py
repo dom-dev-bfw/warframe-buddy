@@ -101,44 +101,9 @@ def post_sunday_reminder():
     except Exception as e:
         print("Fehler beim Prüfen von Supabase:", e)
 
-def check_arc_raiders_news():
-    # Steam App ID für ARC Raiders: 1808500
-    url = "https://api.steampowered.com/ISteamNews/GetNewsForApp/v0002/?appid=1808500&count=1&maxlength=300&format=json"
-    try:
-        r = requests.get(url, timeout=10)
-        if not r.ok:
-            return
-        
-        data = r.json()
-        news_items = data.get("appnews", {}).get("newsitems", [])
-        if not news_items:
-            return
-        
-        latest = news_items[0]
-        title = latest.get("title")
-        news_url = latest.get("url")
-        contents = latest.get("contents", "")
-        clean_contents = contents.replace("[b]", "**").replace("[/b]", "**").replace("[url]", "").replace("[/url]", "")
-
-        embed = {
-            "title": f"🚀 ARC Raiders News: {title}",
-            "url": news_url,
-            "description": clean_contents[:300] + ("..." if len(clean_contents) > 300 else ""),
-            "color": 0xFF5722,
-            "footer": {
-                "text": "Embark Studios / Steam Newsfeed"
-            }
-        }
-        send_discord_embed(embed)
-    except Exception as e:
-        print("Fehler beim Abrufen der ARC Raiders News:", e)
-
 if __name__ == "__main__":
     weekday = datetime.now(timezone.utc).weekday()
     if weekday == 6:
         post_sunday_reminder()
     else:
         post_monday_reset()
-
-    # News-Check aktivieren:
-    check_arc_raiders_news()

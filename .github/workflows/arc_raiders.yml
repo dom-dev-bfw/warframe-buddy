@@ -1,0 +1,27 @@
+name: ARC Raiders News Feed
+
+on:
+  schedule:
+    # Prüft alle 12 Stunden (um 06:00 und 18:00 UTC)
+    - cron: '0 6,18 * * *'
+  workflow_dispatch:
+
+jobs:
+  check_news:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pakete installieren
+        run: pip install requests
+
+      - name: News abrufen & senden
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python arc_raiders_notifier.py
