@@ -876,7 +876,26 @@
           const duviri = await res.json();
           const rotationEl = document.getElementById("duviri-rotation-text");
           if (rotationEl && duviri.choices) {
-            rotationEl.innerHTML = `<strong>Frames:</strong> ${duviri.choices.join(', ')}`;
+            let frameNames = [];
+
+            // Prüfen, ob choices Objekte oder Strings enthält
+            if (Array.isArray(duviri.choices)) {
+              duviri.choices.forEach(c => {
+                if (typeof c === 'string') {
+                  frameNames.push(c);
+                } else if (c && Array.isArray(c.choices)) {
+                  frameNames.push(...c.choices);
+                } else if (c && c.name) {
+                  frameNames.push(c.name);
+                }
+              });
+            }
+
+            if (frameNames.length > 0) {
+              rotationEl.innerHTML = `<strong>Frames:</strong> ${frameNames.join(', ')}`;
+            } else {
+              rotationEl.innerHTML = `<strong>Status:</strong> Rotation aktiv (Stufe lädt...)`;
+            }
           }
         }
 
