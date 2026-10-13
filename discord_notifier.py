@@ -1,6 +1,6 @@
 import os
+from datetime import datetime, timezone
 import requests
-from supabase import create_client
 
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 SUPABASE_URL = "https://cvtdjitedrlfgzxkzjaj.supabase.co"
@@ -11,14 +11,13 @@ def send_discord_embed(embed):
         print("Kein Discord Webhook hinterlegt.")
         return
     payload = {"embeds": [embed]}
-    res = requests.post(DISCORD_WEBHOOK_URL, json=payload)
+    res = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=10)
     if res.status_code not in (200, 204):
         print(f"Fehler beim Senden: {res.status_code} - {res.text}")
     else:
         print("Discord Benachrichtigung erfolgreich gesendet!")
 
 def post_monday_reset():
-    # 1. Duviri Circuit aus API holen
     frames = "Keine Daten verfügbar"
     try:
         r = requests.get("https://api.warframestat.us/pc/duviriCycle", timeout=10)
@@ -66,10 +65,19 @@ def post_monday_reset():
     send_discord_embed(embed)
 
 def post_sunday_reminder():
+    if not SUPABASE_KEY:
+        print("Kein Supabase Key vorhanden.")
+        return
+
+    headers = {
+        "apikey": SUPABASE_KEY,
+        "Authorization": f"Bearer {SUPABASE_KEY}"
+    }
+
     try:
-        sb = create_client(SUPABASE_URL, SUPABASE_KEY)
-        res = sb.table("weekly_checklist").select("*").eq("is_done", False).execute()
-        open_tasks = res.data or []
+        url = f"{SUPABASE_URL}/rest/v1/weekly_checklist?is_done=eq.false&select=*"
+        res = requests.get(url, headers=headers, timeout=10)
+        open_tasks = res.json() if res.ok else []
 
         if not open_tasks:
             embed = {
@@ -82,7 +90,7 @@ def post_sunday_reminder():
 
         text = ""
         for t in open_tasks:
-            text += f"• **{t['player_name']}**: `{t['task_id']}`\n"
+            text += f"• **{t.get('player_name', 'Tenno')}**: `{t.get('task_id', '-')}`\n"
 
         embed = {
             "title": "⚠️ Deadline-Warnung: Wöchentlicher Reset naht!",
@@ -94,8 +102,9 @@ def post_sunday_reminder():
         print("Fehler beim Prüfen von Supabase:", e)
 
 if __name__ == "__main__":
-    action_type = os.getenv("ACTION_TYPE", "monday")
-    if action_type == "monday":
-        post_monday_reset()
-    elif action_type == "sunday":
+    # Sonntag = 6 im UTC-Kalender
+    weekday = datetime.now(timezone.utc).weekday()
+    if weekday == 6:
         post_sunday_reminder()
+    else:
+        post_monday_reset()

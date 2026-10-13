@@ -2,11 +2,11 @@ name: Warframe Weekly Reset Alerts
 
 on:
   schedule:
-    # Montag um 00:05 UTC (Neuer Reset)
+    # Montag um 00:05 UTC
     - cron: '5 0 * * 1'
-    # Sonntag um 18:00 UTC (Deadline-Warnung)
+    # Sonntag um 18:00 UTC
     - cron: '0 18 * * 0'
-  workflow_dispatch: # Erlaubt manuellen Test-Klick auf GitHub!
+  workflow_dispatch:
 
 jobs:
   notify:
@@ -22,12 +22,11 @@ jobs:
 
       - name: Abhängigkeiten installieren
         run: |
-          pip install requests supabase
+          pip install requests
 
       - name: Discord Alert ausführen
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          ACTION_TYPE: ${{ github.event.schedule == '0 18 * * 0' && 'sunday' || 'monday' }}
         run: |
           python discord_notifier.py
