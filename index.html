@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warframe Co-Op Live Dashboard</title>
+  <link rel="icon" href="data:,">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg-void: #05070c;
+      --panel-bg: rgba(13, 18, 30, 0.82);
+      --panel-border: rgba(0, 229, 255, 0.22);
+      --gold-primary: #e5b95c;
+      --gold-glow: rgba(229, 185, 92, 0.45);
+      --cyan-primary: #00e5ff;
+      --cyan-glow: rgba(0, 229, 255, 0.4);
+      --lotus-purple: #c084fc;
+      --status-red: #ff4757;
+      --status-green: #2ed573;
+      --text-bright: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: radial-gradient(circle at 50% 5%, #16203a 0%, var(--bg-void) 75%);
+      background-attachment: fixed;
+      color: var(--text-bright);
+      margin: 0;
+      padding: 16px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* 1. GHIBLI HERO BANNER */
+    .header-banner {
+      position: relative;
+      border-radius: 14px 14px 4px 4px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.15);
+      background: url('banner.jpg') center/cover no-repeat;
+      min-height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+    }
+    .header-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(5, 7, 12, 0.1) 0%, rgba(5, 7, 12, 0.88) 100%);
+    }
+    .header-content {
+      position: relative;
+      z-index: 2;
+    }
+    .header-content h1 {
+      margin: 0;
+      font-size: 1.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 0 18px var(--cyan-glow), 0 2px 4px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-content .subtitle {
+      font-size: 0.85rem;
+      color: var(--cyan-primary);
+      letter-spacing: 2px;
+      margin-top: 6px;
+      text-transform: uppercase;
+      font-weight: 600;
+      text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+
+    /* 2. SENPAI GHIBLI FEATURE PANEL */
+    .senpai-hero-card {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      background: var(--panel-bg);
+      border: 1px solid var(--gold-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(229, 185, 92, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+    .senpai-hero-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold-primary), var(--cyan-primary), transparent);
+    }
+    .senpai-img-wrap {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--gold-primary);
+      box-shadow: 0 0 18px var(--gold-glow);
+      display: flex;
+      background: #000;
+    }
+    .senpai-large-img {
+      width: 100%;
+      height: auto;
+      max-height: 280px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .senpai-hero-card:hover .senpai-large-img {
+      transform: scale(1.04);
+    }
+    .senpai-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .senpai-title {
+      margin: 0 0 10px 0;
+      font-size: 1.4rem;
+      color: var(--gold-primary);
+      text-shadow: 0 0 12px var(--gold-glow);
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .senpai-quote {
+      font-style: italic;
+      color: #fff;
+      font-size: 1.05rem;
+      margin: 0 0 10px 0;
+      letter-spacing: 0.5px;
+    }
+    .senpai-desc {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .senpai-hero-card {
+        grid-template-columns: 1fr;
+      }
+      .senpai-large-img {
+        max-height: 260px;
+      }
+    }
+
+    /* 3. WARFRAME HUD KARTEN */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background: var(--panel-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--cyan-primary);
+      box-shadow: 0 0 12px var(--cyan-primary);
+    }
+    .card h2 {
+      margin: 0 0 14px 0;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
+    /* BADGES */
+    .badge {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .online {
+      background: rgba(46, 213, 115, 0.15);
+      color: var(--status-green);
+      border: 1px solid var(--status-green);
+      box-shadow: 0 0 10px rgba(46, 213, 115, 0.4);
+    }
+    .offline {
+      background: rgba(255, 71, 87, 0.15);
+      color: var(--status-red);
+      border: 1px solid var(--status-red);
+    }
+    .status-ready {
+      background: rgba(46, 213, 115, 0.15);
+      color: var(--status-green);
+      border: 1px solid var(--status-green);
+    }
+    .status-tausch {
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--cyan-primary);
+      border: 1px solid var(--cyan-primary);
+    }
+
+    /* ROWS */
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.92rem;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .label { color: var(--text-dim); }
+    .val { font-weight: 600; color: #fff; }
+    .highlight { color: var(--gold-primary); text-shadow: 0 0 8px var(--gold-glow); }
+
+    /* XP PROGRESS BAR */
+    .progress-container {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      height: 12px;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .progress-bar {
+      background: linear-gradient(90deg, #1f6feb, var(--cyan-primary));
+      height: 100%;
+      width: 0%;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px var(--cyan-primary);
+    }
+    .progress-ready {
+      background: linear-gradient(90deg, #d29922, var(--gold-primary));
+      box-shadow: 0 0 14px var(--gold-primary);
+    }
+
+    /* BUTTONS & CONTROLS */
+    .btn-counter {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: all 0.2s ease;
+    }
+    .btn-counter:hover {
+      background: rgba(0, 229, 255, 0.25);
+      border-color: var(--cyan-primary);
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+    .btn-counter:active { transform: scale(0.95); }
+
+    input, select {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+    input:focus, select:focus {
+      border-color: var(--cyan-primary);
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- 1. GHIBLI HERO BANNER -->
+    <div class="header-banner">
+      <div class="header-content">
+        <h1>⚔️ Warframe Live Hub</h1>
+        <div class="subtitle">Operator Sync &bull; Boss-Positionen Verifiziert</div>
+      </div>
+    </div>
+
+    <!-- 2. SENPAI GHIBLI FEATURE PANEL -->
+    <div class="senpai-hero-card">
+      <div class="senpai-img-wrap">
+        <img src="senpai.jpg" alt="Notice me Senpai" class="senpai-large-img">
+      </div>
+      <div class="senpai-body">
+        <h3 class="senpai-title">✨ The Lost Primarchs Duo</h3>
+        <div class="senpai-quote">„Notice me, Senpai!“</div>
+        <p class="senpai-desc">
+          Echtzeit-Synchronisation zwischen Mentor und Trainee. Verfolge Kampagnen-Fortschritte, organisiere Relikt-Öffnungen und halte die Prime-Wunschliste auf Kurs.
+        </p>
+      </div>
+    </div>
+
+    <!-- 3. SPIELER-STATUS -->
+    <div id="players-grid" class="grid"></div>
+
+    <!-- 4. CLAN-DOJO -->
+    <div class="card" style="border-left-color: var(--gold-primary);">
+      <h2>
+        <span>🏰 Clan-Dojo</span>
+        <span class="badge" style="background: rgba(229, 185, 92, 0.15); color: var(--gold-primary); border: 1px solid var(--gold-primary);">XP TRACKER</span>
+      </h2>
+      <div class="info-row">
+        <span class="label">Clan:</span>
+        <span class="val highlight" id="clan-name">THELOSTPRIMARCHS</span>
+      </div>
+      <div class="info-row">
+        <span class="label">Clan-Rang:</span>
+        <span class="val" id="clan-rank">-</span>
+      </div>
+      <div class="info-row" style="flex-direction: column; align-items: stretch; gap: 4px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span class="label">Rang-Fortschritt:</span>
+          <span class="val" id="xp-text">-</span>
+        </div>
+        <div class="progress-container">
+          <div id="xp-bar" class="progress-bar"></div>
+        </div>
+      </div>
+      <div class="info-row">
+        <span class="label">Status:</span>
+        <span class="val" id="clan-levelup">-</span>
+      </div>
+    </div>
+
+    <!-- 5. KAMPAGNEN & SYNDIKATS-TRACKER -->
+    <div class="card">
+      <h2>🗺️ Hauptgeschichte & Open-World Syndikate</h2>
+      <div id="campaign-grid" class="grid" style="margin-top: 12px; margin-bottom: 0;"></div>
+    </div>
+
+    <!-- 6. VISUELLER DUO-FARM-TRACKER & HANGAR -->
+    <div class="card" style="border-left-color: var(--gold-primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.1rem; color: var(--gold-primary);">🎯 Duo-Hangar: Aktive Farm-Ziele</h2>
+        <div style="display: flex; gap: 8px;">
+          <button id="btn-tab-active" onclick="switchFarmTab('active')" style="background: var(--gold-primary); color: #111; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">Aktiv</button>
+          <button id="btn-tab-completed" onclick="switchFarmTab('completed')" style="background: #222; color: #aaa; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Sammlung (Vault)</button>
+        </div>
+      </div>
+
+      <!-- Such- & Hinzufügen-Leiste -->
+      <div id="farm-add-bar" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <input type="text" id="farm-search-input" placeholder="z. B. Dagath, Gauss Prime, Torid..." style="flex: 1; min-width: 200px;">
+        <select id="farm-player-select" style="background: #1a1a24;">
+          <option value="Nexes92">Nexes92</option>
+          <option value="Partner">Partner</option>
+        </select>
+        <button onclick="addFarmTargetFromInput()" style="background: var(--cyan-primary); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">+ Hinzufügen</button>
+      </div>
+
+      <!-- Container für die Farm-Karten -->
+      <div id="farm-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
+        <div style="color: var(--text-dim); font-size: 0.9rem;">Lade Farm-Ziele...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://cvtdjitedrlfgzxkzjaj.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dGRqaXRlZHJsZmd6eGt6amFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NDk4NjYsImV4cCI6MjEwNjQyNTg2Nn0.i4VJ-7aLcoGCPiPUwQBwKzTQrccr6fFfY0fSSPFYyko";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const QUEST_LISTE = [
+      "Vors Preis", "Einmal erwacht", "Das Herz von Deimos", "Das Archwing", "Natah",
+      "Der Zweite Traum", "Der Innere Krieg", "Ketten von Harrow", "Apostesie-Prolog",
+      "Das Opfer", "Präludium zum Krieg", "Der Neue Krieg", "Engel des Zariman",
+      "Flüstern in den Wänden", "Warframe: 1999"
+    ];
+
+    function holeNaechsteQuest(aktuelle) {
+      const idx = QUEST_LISTE.indexOf(aktuelle);
+      if (idx !== -1 && idx + 1 < QUEST_LISTE.length) return QUEST_LISTE[idx + 1];
+      return "Endstand erreicht 🎉";
+    }
+
+    async function ladeDashboardDaten() {
+      try {
+        // 1. SPIELER-STATUS MIT AUTOMATISCHEM OFFLINE-TIMER (75 SEKUNDEN)
+        const { data: allPlayers } = await supabaseClient
+          .from('player_status')
+          .select('*')
+          .order('player_name', { ascending: true });
+
+        if (allPlayers && allPlayers.length > 0) {
+          const grid = document.getElementById('players-grid');
+          grid.innerHTML = '';
+          
+          const JETZT = new Date().getTime();
+
+          allPlayers.forEach(player => {
+            const lastUpdated = player.updated_at ? new Date(player.updated_at).getTime() : 0;
+            const diffSekunden = Math.floor((JETZT - lastUpdated) / 1000);
+
+            const isOnline = (player.current_location !== 'Offline') && (diffSekunden < 75);
+
+            const badgeClass = isOnline ? 'badge online' : 'badge offline';
+            const badgeText = isOnline ? 'ONLINE' : 'OFFLINE';
+            const timeStr = player.updated_at ? new Date(player.updated_at).toLocaleTimeString() : '-';
+            const locationText = isOnline ? (player.current_location || '-') : 'Offline';
+            const activityText = isOnline ? (player.last_activity || '-') : 'Zuletzt gesehen';
+
+            grid.innerHTML += `
+              <div class="card" style="margin-bottom:0;">
+                <h2>
+                  <span>👤 ${player.player_name}</span>
+                  <span class="${badgeClass}">${badgeText}</span>
+                </h2>
+                <div class="info-row"><span class="label">Ort:</span><span class="val" style="color:var(--cyan-primary);">${locationText}</span></div>
+                <div class="info-row"><span class="label">Aktivität:</span><span class="val">${activityText}</span></div>
+                <div class="info-row"><span class="label">Zeit:</span><span class="val" style="font-size:0.8rem; color:var(--text-dim);">${timeStr}</span></div>
+              </div>
+            `;
+          });
+        }
+
+        // 2. DOJO-INFO
+        const { data: dojoData } = await supabaseClient
+          .from('dojo_info')
+          .select('*')
+          .eq('clan_name', 'THELOSTPRIMARCHS')
+          .single();
+
+        if (dojoData) {
+          document.getElementById('clan-name').innerText = dojoData.clan_name;
+          document.getElementById('clan-rank').innerText = "Rang " + dojoData.clan_rank;
+
+          const currentXp = dojoData.current_xp || 0;
+          const targetXp = dojoData.xp_for_next_rank || 1;
+          const diff = targetXp - currentXp;
+          const percent = Math.min(100, Math.max(0, Math.round((currentXp / targetXp) * 100)));
+
+          const xpBar = document.getElementById('xp-bar');
+          const xpText = document.getElementById('xp-text');
+          const levelUpText = document.getElementById('clan-levelup');
+
+          if (dojoData.level_up_ready || diff <= 0) {
+            xpText.innerText = "100% (Maximum erreicht)";
+            xpBar.style.width = "100%";
+            xpBar.className = "progress-bar progress-ready";
+            levelUpText.innerHTML = "<span class='highlight'>🎉 BEREIT AM ALTAR!</span>";
+          } else {
+            xpText.innerText = `${percent}% (fehlen noch ${diff.toLocaleString()} XP)`;
+            xpBar.style.width = percent + "%";
+            xpBar.className = "progress-bar";
+            levelUpText.innerText = "Forschung läuft";
+          }
+        }
+
+        // 3. KAMPAGNE & SYNDIKATE (Railjack & Necramech entfernt)
+        const { data: campaignData } = await supabaseClient
+          .from('campaign_progress')
+          .select('*')
+          .order('player_name', { ascending: true });
+
+        if (campaignData) {
+          const campGrid = document.getElementById('campaign-grid');
+          campGrid.innerHTML = '';
+
+          campaignData.forEach(c => {
+            let questOptionsHtml = '';
+            QUEST_LISTE.forEach(q => {
+              questOptionsHtml += `<option value="${q}" ${q === c.current_quest ? 'selected' : ''}>${q}</option>`;
+            });
+
+            campGrid.innerHTML += `
+              <div style="background: rgba(0,0,0,0.4); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px; margin-bottom:12px;">
+                  <h3 style="margin:0; font-size:1.05rem; color:var(--cyan-primary); letter-spacing:0.5px;">⚔️ ${c.player_name}</h3>
+                  <span class="badge ${c.quest_status === 'Abgeschlossen' ? 'status-ready' : 'status-tausch'}" style="cursor:pointer;" onclick="toggleQuestStatus(${c.id}, '${c.quest_status || 'Aktiv'}')">
+                    ${c.quest_status || 'Aktiv'} 🔄
+                  </span>
+                </div>
+
+                <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Aktuelle Hauptquest:</span>
+                    <select onchange="aendereQuest(${c.id}, this.value)" style="background:rgba(0,0,0,0.6); color:var(--cyan-primary); border:1px solid rgba(0,229,255,0.3); font-size:0.75rem; padding:3px 6px; border-radius:6px;">
+                      ${questOptionsHtml}
+                    </select>
+                  </div>
+                  <div style="font-size:1.05rem; font-weight:bold; color:#fff; margin:6px 0 2px 0;">📜 ${c.current_quest || 'Der Zweite Traum'}</div>
+                  <div style="font-size:0.82rem; color:var(--text-dim);">
+                    Nächste Quest: <span style="color:var(--gold-primary); font-weight:600;">${c.next_quest || holeNaechsteQuest(c.current_quest)}</span>
+                  </div>
+                </div>
+
+                <div class="info-row">
+                  <span class="label">🌾 Ostron (Cetus):</span>
+                  <span class="val">
+                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'cetus_rank', -1)">-</button>
+                    Rang ${c.cetus_rank} / 5
+                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'cetus_rank', 1)">+</button>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="label">❄️ Solaris (Fortuna):</span>
+                  <span class="val">
+                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'fortuna_rank', -1)">-</button>
+                    Rang ${c.fortuna_rank} / 5
+                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'fortuna_rank', 1)">+</button>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="label">💀 Entrati (Deimos):</span>
+                  <span class="val">
+                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'deimos_rank', -1)">-</button>
+                    Rang ${c.deimos_rank} / 5
+                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'deimos_rank', 1)">+</button>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="label">🪙 Mutter-Marken:</span>
+                  <span class="val">
+                    <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, -10)">-10</button>
+                    <span class="highlight" style="display:inline-block; min-width:35px; text-align:center;">${c.mother_tokens}</span>
+                    <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, 10)">+10</button>
+                  </span>
+                </div>
+              </div>
+            `;
+          });
+        }
+
+      } catch (err) {
+        console.error("Dashboard-Fehler:", err);
+      }
+    }
+
+    async function aendereQuest(id, neueQuest) {
+      const naechste = holeNaechsteQuest(neueQuest);
+      await supabaseClient.from('campaign_progress').update({ 
+        current_quest: neueQuest,
+        next_quest: naechste
+      }).eq('id', id);
+      ladeDashboardDaten();
+    }
+
+    async function toggleQuestStatus(id, currentStatus) {
+      const neuerStatus = currentStatus === 'Aktiv' ? 'Abgeschlossen' : 'Aktiv';
+      await supabaseClient.from('campaign_progress').update({ quest_status: neuerStatus }).eq('id', id);
+      ladeDashboardDaten();
+    }
+
+    async function aendereSyndikatRang(id, field, delta) {
+      const { data } = await supabaseClient.from('campaign_progress').select(field).eq('id', id).single();
+      if (data) {
+        const neuerRang = Math.max(0, Math.min(5, (data[field] || 0) + delta));
+        await supabaseClient.from('campaign_progress').update({ [field]: neuerRang }).eq('id', id);
+        ladeDashboardDaten();
+      }
+    }
+
+    async function aendereSyndikatTokens(id, delta) {
+      const { data } = await supabaseClient.from('campaign_progress').select('mother_tokens').eq('id', id).single();
+      if (data) {
+        const neuerWert = Math.max(0, (data.mother_tokens || 0) + delta);
+        await supabaseClient.from('campaign_progress').update({ mother_tokens: neuerWert }).eq('id', id);
+        ladeDashboardDaten();
+      }
+    }
+
+    // ==========================================
+    // LOGIK FÜR VISUELLEN FARM-TRACKER (HANGAR)
+    // ==========================================
+    let currentFarmTab = 'active';
+
+    function switchFarmTab(tab) {
+      currentFarmTab = tab;
+      document.getElementById('btn-tab-active').style.background = tab === 'active' ? 'var(--gold-primary)' : '#222';
+      document.getElementById('btn-tab-active').style.color = tab === 'active' ? '#111' : '#aaa';
+      document.getElementById('btn-tab-completed').style.background = tab === 'completed' ? 'var(--gold-primary)' : '#222';
+      document.getElementById('btn-tab-completed').style.color = tab === 'completed' ? '#111' : '#aaa';
+      document.getElementById('farm-add-bar').style.display = tab === 'active' ? 'flex' : 'none';
+      ladeFarmTargets();
+    }
+
+    async function ladeFarmTargets() {
+      const grid = document.getElementById('farm-grid');
+      const isCompleted = currentFarmTab === 'completed';
+
+      const { data: targets, error } = await supabaseClient
+        .from('farm_targets')
+        .select('*')
+        .eq('is_completed', isCompleted);
+
+      if (error || !targets) {
+        grid.innerHTML = '<div style="color: var(--status-red);">Fehler beim Laden der Farm-Ziele.</div>';
+        return;
+      }
+
+      if (targets.length === 0) {
+        grid.innerHTML = `<div style="color: var(--text-dim); grid-column: 1/-1; text-align: center; padding: 20px;">
+          ${isCompleted ? 'Noch keine archivierten Items in der Sammlung.' : 'Keine aktiven Farm-Ziele. Füge oben eins hinzu!'}
+        </div>`;
+        return;
+      }
+
+      targets.forEach(t => {
+        const owned = (t.parts || []).filter(p => p.owned).length;
+        t.progress = t.parts && t.parts.length > 0 ? (owned / t.parts.length) : 0;
+      });
+
+      if (!isCompleted) {
+        targets.sort((a, b) => b.progress - a.progress);
+      }
+
+      grid.innerHTML = targets.map(t => {
+        const ownedCount = (t.parts || []).filter(p => p.owned).length;
+        const totalCount = (t.parts || []).length;
+        const percent = Math.round(t.progress * 100);
+
+        return `
+        <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+              <img src="${t.image_url || 'https://raw.githubusercontent.com/WFCD/warframe-items/development/data/img/placeholder.png'}" 
+                   style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
+                   alt="${t.item_name}" onerror="this.src='https://raw.githubusercontent.com/WFCD/warframe-items/development/data/img/placeholder.png'">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
+                <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
+                <div style="font-size: 0.8rem; color: var(--cyan-primary);">${ownedCount}/${totalCount} Teile (${percent}%)</div>
+              </div>
+            </div>
+
+            <!-- Fortschrittsbalken -->
+            <div style="width: 100%; height: 5px; background: #222; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+              <div style="width: ${percent}%; height: 100%; background: ${percent === 100 ? 'var(--gold-primary)' : 'var(--cyan-primary)'}; transition: width 0.3s;"></div>
+            </div>
+
+            <!-- Klickbare Bauteil-Chips -->
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
+              ${(t.parts || []).map((p, idx) => `
+                <button onclick="toggleFarmPart(${t.id},${idx})" 
+                        style="background: ${p.owned ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 255, 255, 0.05)'}; 
+                               border: 1px solid ${p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)'}; 
+                               color: ${p.owned ? 'var(--status-green)' : 'var(--text-dim)'}; 
+                               padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                  ${p.owned ? '✓ ' : ''}${p.name}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Aktionen -->
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+            ${!t.is_completed ? `
+              <button onclick="completeFarmTarget(${t.id})" 
+                      style="background: ${percent === 100 ? 'var(--gold-primary)' : 'transparent'}; 
+                             color: ${percent === 100 ? '#111' : 'var(--text-dim)'}; 
+                             border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)'}; 
+                             padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">
+                ${percent === 100 ? '⭐ Fertig (In Vault)' : 'Archivieren'}
+              </button>
+            ` : `
+              <button onclick="uncompleteFarmTarget(${t.id})" style="background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                Zurück zu Aktiv
+              </button>
+            `}
+            <button onclick="deleteFarmTarget(${t.id})" style="background: transparent; color: var(--status-red); border: none; font-size: 1rem; cursor: pointer;" title="Löschen">🗑️</button>
+          </div>
+        </div>
+        `;
+      }).join('');
+    }
+
+    async function toggleFarmPart(targetId, partIndex) {
+      const { data: target } = await supabaseClient.from('farm_targets').select('parts').eq('id', targetId).single();
+      if (!target) return;
+
+      const updatedParts = [...target.parts];
+      updatedParts[partIndex].owned = !updatedParts[partIndex].owned;
+
+      await supabaseClient.from('farm_targets').update({
+        parts: updatedParts,
+        updated_at: new Date().toISOString()
+      }).eq('id', targetId);
+
+      ladeFarmTargets();
+    }
+
+    async function completeFarmTarget(targetId) {
+      await supabaseClient.from('farm_targets').update({
+        is_completed: true,
+        updated_at: new Date().toISOString()
+      }).eq('id', targetId);
+      ladeFarmTargets();
+    }
+
+    async function uncompleteFarmTarget(targetId) {
+      await supabaseClient.from('farm_targets').update({
+        is_completed: false,
+        updated_at: new Date().toISOString()
+      }).eq('id', targetId);
+      ladeFarmTargets();
+    }
+
+    async function deleteFarmTarget(targetId) {
+      if (!confirm('Ziel wirklich löschen?')) return;
+      await supabaseClient.from('farm_targets').delete().eq('id', targetId);
+      ladeFarmTargets();
+    }
+
+    async function addFarmTargetFromInput() {
+      const input = document.getElementById('farm-search-input');
+      const query = input.value.trim();
+      const playerName = document.getElementById('farm-player-select').value;
+      if (!query) return;
+
+      const defaultParts = [
+        { name: "Blaupause", owned: false },
+        { name: "Chassis", owned: false },
+        { name: "Neuroptik", owned: false },
+        { name: "Systeme", owned: false }
+      ];
+
+      const slug = query.toLowerCase().replace(/\s+/g, '-');
+      const imageUrl = `https://raw.githubusercontent.com/WFCD/warframe-items/development/data/img/${slug}.png`;
+
+      await supabaseClient.from('farm_targets').insert([{
+        player_name: playerName,
+        item_name: query,
+        image_url: imageUrl,
+        parts: defaultParts,
+        is_completed: false
+      }]);
+
+      input.value = '';
+      ladeFarmTargets();
+    }
+
+    // Initiale Aufrufe
+    ladeDashboardDaten();
+    ladeFarmTargets();
+    setInterval(ladeDashboardDaten, 4000);
+  </script>
+</body>
+</html>
