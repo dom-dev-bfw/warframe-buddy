@@ -85,7 +85,7 @@
       text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
     }
 
-    /* 2. SENPAI GHIBLI FEATURE PANEL */
+    /* 2. SENPAI FEATURE PANEL */
     .senpai-hero-card {
       display: grid;
       grid-template-columns: 340px 1fr;
@@ -127,9 +127,7 @@
       display: block;
       transition: transform 0.4s ease;
     }
-    .senpai-hero-card:hover .senpai-large-img {
-      transform: scale(1.04);
-    }
+    .senpai-hero-card:hover .senpai-large-img { transform: scale(1.04); }
     .senpai-body {
       display: flex;
       flex-direction: column;
@@ -160,15 +158,11 @@
     }
 
     @media (max-width: 768px) {
-      .senpai-hero-card {
-        grid-template-columns: 1fr;
-      }
-      .senpai-large-img {
-        max-height: 260px;
-      }
+      .senpai-hero-card { grid-template-columns: 1fr; }
+      .senpai-large-img { max-height: 260px; }
     }
 
-    /* 3. WARFRAME HUD KARTEN */
+    /* 3. HUD KARTEN & GRID */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -283,10 +277,10 @@
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: bold;
       transition: all 0.2s ease;
     }
@@ -311,6 +305,20 @@
       border-color: var(--cyan-primary);
       box-shadow: 0 0 8px var(--cyan-glow);
     }
+
+    /* SYNDIKATS-MATRIX CARDS */
+    .syndicate-card {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.2s;
+    }
+    .syndicate-card:hover { border-color: rgba(0, 229, 255, 0.3); }
+    .syndicate-card.gemaxt { border-color: var(--gold-primary); background: rgba(229, 185, 92, 0.05); }
   </style>
 </head>
 <body>
@@ -341,22 +349,21 @@
     <!-- 3. SPIELER-STATUS -->
     <div id="players-grid" class="grid"></div>
 
-    <!-- ========================================== -->
-    <!-- ⚡ WOCHEN-RESET & EVENT-HUB                 -->
-    <!-- ========================================== -->
+    <!-- 4. ⚡ WOCHEN-RESET & EVENT-HUB -->
     <div class="card" style="border-left-color: var(--cyan-primary);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2 style="margin: 0; font-size: 1.1rem; color: var(--cyan-primary);">⚡ Wochen-Reset & Event-Kommando</h2>
         <span class="badge online" id="reset-daily-timer">Reset in --:--:--</span>
       </div>
 
-      <!-- Obere Info-Leiste: Daily Standing & Event -->
-      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 15px;">
-        <!-- Tägliches Ansehen -->
-        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
-          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Tägliches Ansehen-Cap (MR 15)</div>
-          <div style="font-size: 1.2rem; font-weight: bold; color: var(--gold-primary); margin-top: 4px;">27.250 Standing</div>
-          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">Reset täglich um 00:00 UTC</div>
+      <!-- Obere Info-Leiste: Dynamische Daily Caps & Event -->
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 15px;">
+        <!-- Dynamische Tages-Limits für beide Spieler -->
+        <div id="standing-caps-container" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Tägliches Ansehen-Cap</div>
+          <div id="standing-caps-list" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-size: 0.85rem; color: #aaa;">Lade Spielerdaten...</div>
+          </div>
         </div>
 
         <!-- Event Der Weg nach Tau -->
@@ -375,10 +382,10 @@
         <div id="duviri-rotation-text" style="font-size: 0.9rem; color: #fff;">Lade Duviri-Rotation aus Warframe API...</div>
       </div>
 
-      <!-- Duo Wochen-Checkliste -->
+      <!-- Duo Wochen-Checkliste (Automatischer Montags-Reset) -->
       <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600;">Wöchentliche Pflichtaufgaben:</span>
+          <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600;">Wöchentliche Pflichtaufgaben (Auto-Reset Mo 00:00 UTC):</span>
           <!-- Riven-Scherben Klick-Zähler -->
           <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
             <span style="color: var(--text-dim);">Riven-Scherben:</span>
@@ -388,13 +395,11 @@
           </div>
         </div>
 
-        <div id="weekly-checklist-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-          <!-- Dynamische Checkboxen für beide Spieler -->
-        </div>
+        <div id="weekly-checklist-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;"></div>
       </div>
     </div>
 
-    <!-- 4. CLAN-DOJO -->
+    <!-- 5. CLAN-DOJO -->
     <div class="card" style="border-left-color: var(--gold-primary);">
       <h2>
         <span>🏰 Clan-Dojo</span>
@@ -423,13 +428,29 @@
       </div>
     </div>
 
-    <!-- 5. KAMPAGNEN & SYNDIKATS-TRACKER -->
+    <!-- 6. KAMPAGNE & HAUPTQUESTS (Fokus Deimos & Mutter-Marken) -->
     <div class="card">
-      <h2>🗺️ Hauptgeschichte & Open-World Syndikate</h2>
+      <h2>🗺️ Hauptgeschichte & Deimos Fokus</h2>
       <div id="campaign-grid" class="grid" style="margin-top: 12px; margin-bottom: 0;"></div>
     </div>
 
-    <!-- 6. VISUELLER DUO-FARM-TRACKER & HANGAR -->
+    <!-- 7. 🏛️ VOLLSTÄNDIGE SYNDIKATS-MATRIX -->
+    <div class="card" style="border-left-color: var(--lotus-purple);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.1rem; color: var(--lotus-purple);">🏛️ Duo-Syndikats-Matrix</h2>
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Ränge 0 bis 5 &bull; Trade-Check</span>
+      </div>
+
+      <!-- Kern-Syndikate -->
+      <div style="font-size: 0.8rem; color: var(--gold-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">6 Haupt-Syndikate (Relais & Handel)</div>
+      <div id="core-syndicates-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 20px;"></div>
+
+      <!-- Open-Worlds & Endgame Fraktionen -->
+      <div style="font-size: 0.8rem; color: var(--cyan-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">Open-World & Endgame Fraktionen</div>
+      <div id="endgame-syndicates-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
+    </div>
+
+    <!-- 8. 🎯 VISUELLER DUO-FARM-TRACKER & HANGAR -->
     <div class="card" style="border-left-color: var(--gold-primary);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2 style="margin: 0; font-size: 1.1rem; color: var(--gold-primary);">🎯 Duo-Hangar: Aktive Farm-Ziele</h2>
@@ -444,10 +465,7 @@
         <input list="wf-all-items-datalist" type="text" id="farm-search-input" placeholder="z. B. Dagath, Gauss Prime, Torid..." style="flex: 1; min-width: 200px;">
         <datalist id="wf-all-items-datalist"></datalist>
 
-        <select id="farm-player-select" style="background: #1a1a24;">
-          <option value="Nexes92">Nexes92</option>
-          <option value="SonofImperator">SonofImperator</option>
-        </select>
+        <select id="farm-player-select" style="background: #1a1a24;"></select>
         <button onclick="addFarmTargetFromInput()" style="background: var(--cyan-primary); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">+ Hinzufügen</button>
       </div>
 
@@ -471,25 +489,48 @@
       "Flüstern in den Wänden", "Warframe: 1999"
     ];
 
+    const CORE_SYNDICATES = [
+      { id: "steel_meridian", name: "Steel Meridian" },
+      { id: "arbiters_hexis", name: "Arbiters of Hexis" },
+      { id: "cephalon_suda", name: "Cephalon Suda" },
+      { id: "perrin_sequence", name: "The Perrin Sequence" },
+      { id: "red_veil", name: "Red Veil" },
+      { id: "new_loka", name: "New Loka" }
+    ];
+
+    const ENDGAME_SYNDICATES = [
+      { id: "ostron", name: "🌾 Ostron (Cetus)" },
+      { id: "solaris_united", name: "❄️ Solaris United (Fortuna)" },
+      { id: "entrati", name: "💀 Entrati (Deimos)" },
+      { id: "necraloid", name: "🤖 Necraloid (Loid)" },
+      { id: "holdfasts", name: "🪐 Die Unholdigen (Zariman)" },
+      { id: "cavia", name: "👁️ Cavia (Sanctum)" }
+    ];
+
     function holeNaechsteQuest(aktuelle) {
       const idx = QUEST_LISTE.indexOf(aktuelle);
       if (idx !== -1 && idx + 1 < QUEST_LISTE.length) return QUEST_LISTE[idx + 1];
       return "Endstand erreicht 🎉";
     }
 
+    // ==========================================
+    // 1. SPIELER-STATUS & DYNAMISCHE STANDING-CAPS
+    // ==========================================
+    let cachedPlayers = [];
+
     async function ladeDashboardDaten() {
       try {
-        // 1. SPIELER-STATUS MIT AUTOMATISCHEM OFFLINE-TIMER (75 SEKUNDEN)
         const { data: allPlayers } = await supabaseClient
           .from('player_status')
           .select('*')
           .order('player_name', { ascending: true });
 
         if (allPlayers && allPlayers.length > 0) {
+          cachedPlayers = allPlayers;
           const grid = document.getElementById('players-grid');
           grid.innerHTML = '';
 
-          // Dropdown für Farm-Ziele automatisch mit echten Spielernamen befüllen:
+          // Dropdown für Farm-Ziele automatisch befüllen
           const playerSelect = document.getElementById('farm-player-select');
           if (playerSelect) {
             const currentSelected = playerSelect.value;
@@ -497,13 +538,28 @@
               `<option value="${p.player_name}" ${p.player_name === currentSelected ? 'selected' : ''}>${p.player_name}</option>`
             ).join('');
           }
+
+          // Dynamische Standing-Caps berechnen
+          const capsContainer = document.getElementById('standing-caps-list');
+          if (capsContainer) {
+            capsContainer.innerHTML = allPlayers.map(p => {
+              // Standard MR: Nexes92 = 15, Partner/Mentor = 28 falls nicht gesetzt
+              const mr = p.mastery_rank || (p.player_name === 'Nexes92' ? 15 : 28);
+              const cap = 16000 + (mr * 750);
+              return `
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
+                  <span style="color: #fff; font-weight: 600;">${p.player_name} (MR ${mr}):</span>
+                  <span style="color: var(--gold-primary); font-weight: bold;">${cap.toLocaleString()} / Tag</span>
+                </div>
+              `;
+            }).join('');
+          }
           
           const JETZT = new Date().getTime();
 
           allPlayers.forEach(player => {
             const lastUpdated = player.updated_at ? new Date(player.updated_at).getTime() : 0;
             const diffSekunden = Math.floor((JETZT - lastUpdated) / 1000);
-
             const isOnline = (player.current_location !== 'Offline') && (diffSekunden < 75);
 
             const badgeClass = isOnline ? 'badge online' : 'badge offline';
@@ -559,7 +615,7 @@
           }
         }
 
-        // 3. KAMPAGNE & SYNDIKATE
+        // 3. KAMPAGNE & DEIMOS FOKUS (Cetus & Fortuna sauber entfernt)
         const { data: campaignData } = await supabaseClient
           .from('campaign_progress')
           .select('*')
@@ -598,31 +654,7 @@
                 </div>
 
                 <div class="info-row">
-                  <span class="label">🌾 Ostron (Cetus):</span>
-                  <span class="val">
-                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'cetus_rank', -1)">-</button>
-                    Rang ${c.cetus_rank} / 5
-                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'cetus_rank', 1)">+</button>
-                  </span>
-                </div>
-                <div class="info-row">
-                  <span class="label">❄️ Solaris (Fortuna):</span>
-                  <span class="val">
-                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'fortuna_rank', -1)">-</button>
-                    Rang ${c.fortuna_rank} / 5
-                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'fortuna_rank', 1)">+</button>
-                  </span>
-                </div>
-                <div class="info-row">
-                  <span class="label">💀 Entrati (Deimos):</span>
-                  <span class="val">
-                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'deimos_rank', -1)">-</button>
-                    Rang ${c.deimos_rank} / 5
-                    <button class="btn-counter" onclick="aendereSyndikatRang(${c.id}, 'deimos_rank', 1)">+</button>
-                  </span>
-                </div>
-                <div class="info-row">
-                  <span class="label">🪙 Mutter-Marken:</span>
+                  <span class="label">🪙 Mutter-Marken (Vorrat):</span>
                   <span class="val">
                     <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, -10)">-10</button>
                     <span class="highlight" style="display:inline-block; min-width:35px; text-align:center;">${c.mother_tokens}</span>
@@ -654,15 +686,6 @@
       ladeDashboardDaten();
     }
 
-    async function aendereSyndikatRang(id, field, delta) {
-      const { data } = await supabaseClient.from('campaign_progress').select(field).eq('id', id).single();
-      if (data) {
-        const neuerRang = Math.max(0, Math.min(5, (data[field] || 0) + delta));
-        await supabaseClient.from('campaign_progress').update({ [field]: neuerRang }).eq('id', id);
-        ladeDashboardDaten();
-      }
-    }
-
     async function aendereSyndikatTokens(id, delta) {
       const { data } = await supabaseClient.from('campaign_progress').select('mother_tokens').eq('id', id).single();
       if (data) {
@@ -673,7 +696,207 @@
     }
 
     // ==========================================
-    // LOGIK FÜR VISUELLEN FARM-TRACKER (HANGAR)
+    // 2. 🏛️ SYNDIKATS-MATRIX (DUO-VERGLEICH & TRADE-CHECK)
+    // ==========================================
+    async function ladeSyndikatsMatrix() {
+      const { data: allRanks } = await supabaseClient.from('syndicate_ranks').select('*');
+      const ranksMap = {};
+      (allRanks || []).forEach(r => {
+        ranksMap[`${r.player_name}_${r.syndicate_id}`] = r.rank;
+      });
+
+      const player1 = cachedPlayers[0]?.player_name || "Nexes92";
+      const player2 = cachedPlayers[1]?.player_name || "Partner";
+
+      function renderSyndicateGrid(syndicatesList, containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        container.innerHTML = syndicatesList.map(s => {
+          const r1 = ranksMap[`${player1}_${s.id}`] || 0;
+          const r2 = ranksMap[`${player2}_${s.id}`] || 0;
+          const isMaxedAny = r1 === 5 || r2 === 5;
+
+          return `
+            <div class="syndicate-card ${isMaxedAny ? 'gemaxt' : ''}">
+              <div>
+                <div style="font-weight: bold; font-size: 0.95rem; color: #fff;">${s.name}</div>
+                <div style="font-size: 0.75rem; color: ${isMaxedAny ? 'var(--gold-primary)' : 'var(--text-dim)'}; margin-top: 2px;">
+                  ${isMaxedAny ? '★ Rang 5 erreicht (Tauschbereit!)' : 'Rang-Auswahl'}
+                </div>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div style="text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--cyan-primary); display: block;">${player1}</span>
+                  <select onchange="updateSyndicateRank('${player1}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
+                    ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r1 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
+                  </select>
+                </div>
+                <div style="text-align: center;">
+                  <span style="font-size: 0.7rem; color: var(--gold-primary); display: block;">${player2}</span>
+                  <select onchange="updateSyndicateRank('${player2}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
+                    ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r2 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      renderSyndicateGrid(CORE_SYNDICATES, 'core-syndicates-grid');
+      renderSyndicateGrid(ENDGAME_SYNDICATES, 'endgame-syndicates-grid');
+    }
+
+    async function updateSyndicateRank(playerName, syndicateId, rankValue) {
+      await supabaseClient.from('syndicate_ranks').upsert({
+        player_name: playerName,
+        syndicate_id: syndicateId,
+        rank: parseInt(rankValue, 10),
+        updated_at: new Date().toISOString()
+      });
+      ladeSyndikatsMatrix();
+    }
+
+    // ==========================================
+    // 3. ⚡ RESET-HUB MIT AUTOMATISCHEM MONTAGS-RESET
+    // ==========================================
+    const TASKS = [
+      { id: "riven_palladino", name: "Palladino (10 Scherben)" },
+      { id: "archon_hunt", name: "Archon-Jagd (Shard)" },
+      { id: "netracells_eda", name: "Netracells / EDA (5/5)" },
+      { id: "tasks_1999", name: "1999 Wochenkalender" }
+    ];
+
+    let globalRivenCount = 0;
+
+    function updateDailyResetTimer() {
+      const now = new Date();
+      const resetTime = new Date();
+      resetTime.setUTCHours(24, 0, 0, 0);
+
+      const diffMs = resetTime - now;
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      const el = document.getElementById("reset-daily-timer");
+      if (el) {
+        el.innerText = `Reset in ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+    }
+    setInterval(updateDailyResetTimer, 1000);
+    updateDailyResetTimer();
+
+    // Berechnet den Timestamp des letzten Montags 00:00 UTC
+    function getLetzterMontagUTC() {
+      const d = new Date();
+      const day = d.getUTCDay();
+      const diff = d.getUTCDate() - day + (day === 0 ? -6 : 1);
+      const montag = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), diff, 0, 0, 0, 0));
+      return montag.getTime();
+    }
+
+    async function ladeWeeklyChecklist() {
+      const container = document.getElementById("weekly-checklist-grid");
+      if (!container) return;
+
+      const { data: listData } = await supabaseClient.from("weekly_checklist").select("*");
+      const letzterMontag = getLetzterMontagUTC();
+
+      // Automatischer Reset, falls Einträge aus der Vorwoche stammen
+      if (listData && listData.length > 0) {
+        for (const item of listData) {
+          const itemUpdate = item.updated_at ? new Date(item.updated_at).getTime() : 0;
+          if (item.is_done && itemUpdate < letzterMontag) {
+            await supabaseClient.from("weekly_checklist").update({
+              is_done: false,
+              updated_at: new Date().toISOString()
+            }).match({ player_name: item.player_name, task_id: item.task_id });
+          }
+        }
+      }
+
+      // Riven-Scherben Stand holen
+      const rivenEntry = (listData || []).find(d => d.task_id === "riven_palladino");
+      if (rivenEntry) {
+        globalRivenCount = rivenEntry.riven_count || 0;
+        const countEl = document.getElementById("riven-shard-count");
+        if (countEl) countEl.innerText = globalRivenCount;
+      }
+
+      const playerNames = cachedPlayers.length > 0 ? cachedPlayers.map(p => p.player_name) : ["Nexes92", "Partner"];
+
+      container.innerHTML = playerNames.map(player => `
+        <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="font-weight: bold; font-size: 0.85rem; color: var(--cyan-primary); margin-bottom: 8px;">${player}</div>
+          ${TASKS.map(task => {
+            const entry = (listData || []).find(d => d.player_name === player && d.task_id === task.id);
+            const isDone = entry ? entry.is_done : false;
+
+            return `
+              <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleWeeklyTask('${player}', '${task.id}',${isDone})" style="cursor: pointer;">
+                <span>${task.name}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      `).join('');
+    }
+
+    async function toggleWeeklyTask(playerName, taskId, currentDone) {
+      await supabaseClient.from("weekly_checklist").upsert({
+        player_name: playerName,
+        task_id: taskId,
+        is_done: !currentDone,
+        riven_count: globalRivenCount,
+        updated_at: new Date().toISOString()
+      });
+      ladeWeeklyChecklist();
+    }
+
+    async function aendereRivenScherben(delta) {
+      globalRivenCount = Math.max(0, globalRivenCount + delta);
+      const countEl = document.getElementById("riven-shard-count");
+      if (countEl) countEl.innerText = globalRivenCount;
+
+      await supabaseClient.from("weekly_checklist").upsert({
+        player_name: "Global",
+        task_id: "riven_palladino",
+        riven_count: globalRivenCount,
+        updated_at: new Date().toISOString()
+      });
+    }
+
+    async function ladeWorldstateDaten() {
+      try {
+        const res = await fetch("https://api.warframestat.us/pc/duviriCycle");
+        if (res.ok) {
+          const duviri = await res.json();
+          const rotationEl = document.getElementById("duviri-rotation-text");
+          if (rotationEl && duviri.choices) {
+            rotationEl.innerHTML = `<strong>Frames:</strong> ${duviri.choices.join(', ')}`;
+          }
+        }
+
+        const resEvents = await fetch("https://api.warframestat.us/pc/events");
+        if (resEvents.ok) {
+          const events = await resEvents.json();
+          const tauEvent = events.find(e => e.description && e.description.toLowerCase().includes("tau"));
+          if (tauEvent) {
+            document.getElementById("tau-desc").innerText = `${tauEvent.description} (Endet: ${new Date(tauEvent.expiry).toLocaleDateString()})`;
+            document.getElementById("tau-badge").className = "badge status-ready";
+            document.getElementById("tau-badge").innerText = "AKTIV 🔥";
+          }
+        }
+      } catch (err) {
+        console.warn("Worldstate API Fehler:", err);
+      }
+    }
+
+    // ==========================================
+    // 4. 🎯 VISUELLER DUO-FARM-TRACKER (HANGAR)
     // ==========================================
     const WF_SUGGESTIONS = [
       "Dagath", "Gauss Prime", "Gauss", "Grendel Prime", "Wisp Prime", "Khora Prime", 
@@ -737,10 +960,7 @@
         const ownedCount = (t.parts || []).filter(p => p.owned).length;
         const totalCount = (t.parts || []).length;
         const percent = Math.round(t.progress * 100);
-
-        // Fallback-Bild, falls URL ins Leere läuft
-        const fallbackImg = "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
-        const imgSrc = t.image_url || fallbackImg;
+        const imgSrc = t.image_url || "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
 
         return `
         <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
@@ -837,7 +1057,6 @@
       ladeFarmTargets();
     }
 
-    // INTELLIGENTES HINZUFÜGEN MIT ECHTER API-ABFRAGE FÜR BILD & SPEZIFISCHE BAUTEILE
     async function addFarmTargetFromInput() {
       const input = document.getElementById('farm-search-input');
       const query = input.value.trim();
@@ -849,33 +1068,27 @@
       let finalName = query;
 
       try {
-        // Echtzeit-Suche in der Warframe API
         const res = await fetch(`https://api.warframestat.us/items/search/${encodeURIComponent(query)}`);
         if (res.ok) {
           const items = await res.json();
-          // Exakten Treffer oder ersten relevanten Treffer finden
           const match = items.find(i => i.name.toLowerCase() === query.toLowerCase()) || items[0];
 
           if (match) {
             finalName = match.name;
-            // Bild-URL aus API beziehen
             if (match.imageName) {
               imageUrl = `https://cdn.warframestat.us/img/${match.imageName}`;
             }
-
-            // Spezifische Bauteile aus der API filtern
             if (match.components && match.components.length > 0) {
               parts = match.components
-                .filter(c => !c.name.toLowerCase().includes("orokin-zelle") && !c.name.toLowerCase().includes("argon")) // Nur Kernteile, keine einfachen Rohstoffe
+                .filter(c => !c.name.toLowerCase().includes("orokin-zelle") && !c.name.toLowerCase().includes("argon"))
                 .map(c => ({ name: c.name, owned: false }));
             }
           }
         }
       } catch (e) {
-        console.warn("Konnte API-Daten nicht abrufen, nutze Standard-Werte:", e);
+        console.warn("API Fehler, nutze Standard-Teile:", e);
       }
 
-      // Fallback für Bauteile, falls API keine spezifischen Komponenten gelistet hat
       if (parts.length === 0) {
         const isWeapon = query.toLowerCase().includes("torid") || query.toLowerCase().includes("lex") || 
                          query.toLowerCase().includes("braton") || query.toLowerCase().includes("orthos") ||
@@ -898,7 +1111,6 @@
         }
       }
 
-      // Eintrag in Supabase speichern
       await supabaseClient.from('farm_targets').insert([{
         player_name: playerName,
         item_name: finalName,
@@ -911,134 +1123,19 @@
       ladeFarmTargets();
     }
 
-    // Initiale Aufrufe
-    ladeDashboardDaten();
-    ladeFarmTargets();
-    setInterval(ladeDashboardDaten, 4000);
-
     // ==========================================
-    // LOGIK FÜR RESET-HUB & WOCHEN-CHECKLISTE
+    // INITIALISIERUNG
     // ==========================================
-    const TASKS = [
-      { id: "riven_palladino", name: "Palladino (10 Scherben)" },
-      { id: "archon_hunt", name: "Archon-Jagd (Shard)" },
-      { id: "netracells_eda", name: "Netracells / EDA (5/5)" },
-      { id: "tasks_1999", name: "1999 Wochenkalender" }
-    ];
-
-    let globalRivenCount = 0;
-
-    // 1. TÄGLICHER RESET-TIMER (00:00 UTC)
-    function updateDailyResetTimer() {
-      const now = new Date();
-      const resetTime = new Date();
-      resetTime.setUTCHours(24, 0, 0, 0); // Nächster Reset um 00:00 UTC
-
-      const diffMs = resetTime - now;
-      const hours = Math.floor(diffMs / (1000 * 60 * 60));
-      const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-      const el = document.getElementById("reset-daily-timer");
-      if (el) {
-        el.innerText = `Reset in ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-      }
-    }
-    setInterval(updateDailyResetTimer, 1000);
-    updateDailyResetTimer();
-
-    // 2. DUVIRI-ROTATION & TAU-EVENT AUS DER OFFIZIELLEN WARFRAME-API LADEN
-    async function ladeWorldstateDaten() {
-      try {
-        const res = await fetch("https://api.warframestat.us/pc/duviriCycle");
-        if (res.ok) {
-          const duviri = await res.json();
-          const rotationEl = document.getElementById("duviri-rotation-text");
-          if (rotationEl && duviri.choices) {
-            rotationEl.innerHTML = `<strong>Frames:</strong> ${duviri.choices.join(', ')}`;
-          }
-        }
-
-        // Event-Status prüfen
-        const resEvents = await fetch("https://api.warframestat.us/pc/events");
-        if (resEvents.ok) {
-          const events = await resEvents.json();
-          const tauEvent = events.find(e => e.description && e.description.toLowerCase().includes("tau"));
-          if (tauEvent) {
-            document.getElementById("tau-desc").innerText = `${tauEvent.description} (Endet: ${new Date(tauEvent.expiry).toLocaleDateString()})`;
-            document.getElementById("tau-badge").className = "badge status-ready";
-            document.getElementById("tau-badge").innerText = "AKTIV 🔥";
-          }
-        }
-      } catch (err) {
-        console.warn("Worldstate API Fehler:", err);
-      }
-    }
-    ladeWorldstateDaten();
-
-    // 3. WOCHEN-CHECKLISTE LADEN & SYNCHRONISIEREN
-    async function ladeWeeklyChecklist() {
-      const container = document.getElementById("weekly-checklist-grid");
-      if (!container) return;
-
-      const { data: listData } = await supabaseClient.from("weekly_checklist").select("*");
-
-      // Riven-Scherben Stand holen
-      const rivenEntry = (listData || []).find(d => d.task_id === "riven_palladino");
-      if (rivenEntry) {
-        globalRivenCount = rivenEntry.riven_count || 0;
-        const countEl = document.getElementById("riven-shard-count");
-        if (countEl) countEl.innerText = globalRivenCount;
-      }
-
-      // Spieler aus player_status ziehen
-      const { data: players } = await supabaseClient.from("player_status").select("player_name");
-      const playerNames = players && players.length > 0 ? players.map(p => p.player_name) : ["Nexes92", "Partner"];
-
-      container.innerHTML = playerNames.map(player => `
-        <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-          <div style="font-weight: bold; font-size: 0.85rem; color: var(--cyan-primary); margin-bottom: 8px;">${player}</div>
-          ${TASKS.map(task => {
-            const entry = (listData || []).find(d => d.player_name === player && d.task_id === task.id);
-            const isDone = entry ? entry.is_done : false;
-
-            return `
-              <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
-                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleWeeklyTask('${player}', '${task.id}',${isDone})" style="cursor: pointer;">
-                <span>${task.name}</span>
-              </label>
-            `;
-          }).join('')}
-        </div>
-      `).join('');
+    async function initDashboard() {
+      await ladeDashboardDaten();
+      await ladeWeeklyChecklist();
+      await ladeSyndikatsMatrix();
+      await ladeFarmTargets();
+      ladeWorldstateDaten();
     }
 
-    async function toggleWeeklyTask(playerName, taskId, currentDone) {
-      await supabaseClient.from("weekly_checklist").upsert({
-        player_name: playerName,
-        task_id: taskId,
-        is_done: !currentDone,
-        riven_count: globalRivenCount,
-        updated_at: new Date().toISOString()
-      });
-      ladeWeeklyChecklist();
-    }
-
-    async function aendereRivenScherben(delta) {
-      globalRivenCount = Math.max(0, globalRivenCount + delta);
-      const countEl = document.getElementById("riven-shard-count");
-      if (countEl) countEl.innerText = globalRivenCount;
-
-      await supabaseClient.from("weekly_checklist").upsert({
-        player_name: "Global",
-        task_id: "riven_palladino",
-        riven_count: globalRivenCount,
-        updated_at: new Date().toISOString()
-      });
-    }
-
-    // Beim Start aufrufen
-    ladeWeeklyChecklist();
+    initDashboard();
+    setInterval(ladeDashboardDaten, 5000);
   </script>
 </body>
 </html>
