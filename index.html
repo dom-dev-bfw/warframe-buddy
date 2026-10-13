@@ -393,7 +393,7 @@
 
         <select id="farm-player-select" style="background: #1a1a24;">
           <option value="Nexes92">Nexes92</option>
-          <option value="Partner">Partner</option>
+          <option value="SonofImperator">SonofImperator</option>
         </select>
         <button onclick="addFarmTargetFromInput()" style="background: var(--cyan-primary); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">+ Hinzufügen</button>
       </div>
@@ -435,6 +435,15 @@
         if (allPlayers && allPlayers.length > 0) {
           const grid = document.getElementById('players-grid');
           grid.innerHTML = '';
+
+          // Dropdown für Farm-Ziele automatisch mit echten Spielernamen befüllen:
+          const playerSelect = document.getElementById('farm-player-select');
+          if (playerSelect) {
+            const currentSelected = playerSelect.value;
+            playerSelect.innerHTML = allPlayers.map(p => 
+              `<option value="${p.player_name}" ${p.player_name === currentSelected ? 'selected' : ''}>${p.player_name}</option>`
+            ).join('');
+          }
           
           const JETZT = new Date().getTime();
 
