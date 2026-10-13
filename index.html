@@ -386,9 +386,11 @@
         </div>
       </div>
 
-      <!-- Such- & Hinzufügen-Leiste -->
+      <!-- Such- & Hinzufügen-Leiste mit Autocomplete -->
       <div id="farm-add-bar" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-        <input type="text" id="farm-search-input" placeholder="z. B. Dagath, Gauss Prime, Torid..." style="flex: 1; min-width: 200px;">
+        <input list="wf-all-items-datalist" type="text" id="farm-search-input" placeholder="z. B. Dagath, Gauss Prime, Torid..." style="flex: 1; min-width: 200px;">
+        <datalist id="wf-all-items-datalist"></datalist>
+
         <select id="farm-player-select" style="background: #1a1a24;">
           <option value="Nexes92">Nexes92</option>
           <option value="Partner">Partner</option>
@@ -495,7 +497,7 @@
           }
         }
 
-        // 3. KAMPAGNE & SYNDIKATE (Railjack & Necramech entfernt)
+        // 3. KAMPAGNE & SYNDIKATE
         const { data: campaignData } = await supabaseClient
           .from('campaign_progress')
           .select('*')
@@ -611,6 +613,27 @@
     // ==========================================
     // LOGIK FÜR VISUELLEN FARM-TRACKER (HANGAR)
     // ==========================================
+    const WF_SUGGESTIONS = [
+      "Dagath", "Gauss Prime", "Gauss", "Grendel Prime", "Wisp Prime", "Khora Prime", 
+      "Revenant Prime", "Protea Prime", "Sevagoth Prime", "Xaku Prime", "Rhino Prime",
+      "Nekros Prime", "Mesa Prime", "Volt Prime", "Saryn Prime", "Banshee Prime",
+      "Harrow Prime", "Garuda Prime", "Baruuk Prime", "Hildryn Prime", "Qorvex", "Kullervo",
+      "Dante", "Jade", "Cyte-09", "Torid", "Dorrclave", "Acceltra Prime", "Akarius Prime",
+      "Glaive Prime", "Nikana Prime", "Lex Prime", "Braton Prime", "Orthos Prime"
+    ];
+
+    function initFarmAutocomplete() {
+      const dl = document.getElementById("wf-all-items-datalist");
+      if (!dl) return;
+      dl.innerHTML = WF_SUGGESTIONS.sort().map(item => `<option value="${item}">`).join('');
+    }
+    initFarmAutocomplete();
+
+    function getWarframeImageUrl(query) {
+      const cleaned = query.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
+      return `https://cdn.warframestat.us/img/${cleaned}.png`;
+    }
+
     let currentFarmTab = 'active';
 
     function switchFarmTab(tab) {
@@ -662,9 +685,10 @@
         <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <img src="${t.image_url || 'https://raw.githubusercontent.com/WFCD/warframe-items/development/data/img/placeholder.png'}" 
+              <img src="${t.image_url || getWarframeImageUrl(t.item_name)}" 
                    style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
-                   alt="${t.item_name}" onerror="this.src='https://raw.githubusercontent.com/WFCD/warframe-items/development/data/img/placeholder.png'">
+                   alt="${t.item_name}" 
+                   onerror="this.onerror=null; this.src='https://cdn.warframestat.us/img/' + this.alt.toLowerCase().replace(/[^a-z0-9]/g, '-') + '.png';">
               <div>
                 <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
                 <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
@@ -678,16 +702,18 @@
             </div>
 
             <!-- Klickbare Bauteil-Chips -->
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
-              ${(t.parts || []).map((p, idx) => `
+            <div style="display: flex; wrap: wrap; gap: 6px; margin-bottom: 15px;">
+              ${(t.parts || []).map((p, idx) => {
+                const bg = p.owned ? '#1b4332' : 'rgba(255, 255, 255, 0.05)';
+                const border = p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)';
+                const col = p.owned ? 'var(--status-green)' : 'var(--text-dim)';
+                return `
                 <button onclick="toggleFarmPart(${t.id},${idx})" 
-                        style="background: ${p.owned ? 'rgba(46, 213, 115, 0.2)' : 'rgba(255, 255, 255, 0.05)'}; 
-                               border: 1px solid ${p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)'}; 
-                               color: ${p.owned ? 'var(--status-green)' : 'var(--text-dim)'}; 
-                               padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                        style="background: ${bg}; border: 1px solid ${border}; color:${col}; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
                   ${p.owned ? '✓ ' : ''}${p.name}
                 </button>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
           </div>
 
@@ -763,8 +789,7 @@
         { name: "Systeme", owned: false }
       ];
 
-      const slug = query.toLowerCase().replace(/\s+/g, '-');
-      const imageUrl = `https://raw.githubusercontent.com/WFCD/warframe-items/development/data/img/${slug}.png`;
+      const imageUrl = getWarframeImageUrl(query);
 
       await supabaseClient.from('farm_targets').insert([{
         player_name: playerName,
