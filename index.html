@@ -341,6 +341,59 @@
     <!-- 3. SPIELER-STATUS -->
     <div id="players-grid" class="grid"></div>
 
+    <!-- ========================================== -->
+    <!-- ⚡ WOCHEN-RESET & EVENT-HUB                 -->
+    <!-- ========================================== -->
+    <div class="card" style="border-left-color: var(--cyan-primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.1rem; color: var(--cyan-primary);">⚡ Wochen-Reset & Event-Kommando</h2>
+        <span class="badge online" id="reset-daily-timer">Reset in --:--:--</span>
+      </div>
+
+      <!-- Obere Info-Leiste: Daily Standing & Event -->
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 15px;">
+        <!-- Tägliches Ansehen -->
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Tägliches Ansehen-Cap (MR 15)</div>
+          <div style="font-size: 1.2rem; font-weight: bold; color: var(--gold-primary); margin-top: 4px;">27.250 Standing</div>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">Reset täglich um 00:00 UTC</div>
+        </div>
+
+        <!-- Event Der Weg nach Tau -->
+        <div id="event-tau-card" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,229,255,0.3);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--cyan-primary); text-transform: uppercase; font-weight: bold;">🌌 Der Weg nach Tau</span>
+            <span class="badge status-tausch" id="tau-badge">Bereit</span>
+          </div>
+          <div id="tau-desc" style="font-size: 0.85rem; color: #fff; margin-top: 6px;">Startet am 15. Oktober</div>
+        </div>
+      </div>
+
+      <!-- Duviri Circuit Live Rotation -->
+      <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 15px;">
+        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px;">🌀 Duviri Circuit (Aktuelle Woche)</div>
+        <div id="duviri-rotation-text" style="font-size: 0.9rem; color: #fff;">Lade Duviri-Rotation aus Warframe API...</div>
+      </div>
+
+      <!-- Duo Wochen-Checkliste -->
+      <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600;">Wöchentliche Pflichtaufgaben:</span>
+          <!-- Riven-Scherben Klick-Zähler -->
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
+            <span style="color: var(--text-dim);">Riven-Scherben:</span>
+            <button class="btn-counter" onclick="aendereRivenScherben(-1)">-</button>
+            <span id="riven-shard-count" class="highlight" style="min-width: 20px; text-align: center;">0</span>
+            <button class="btn-counter" onclick="aendereRivenScherben(1)">+</button>
+          </div>
+        </div>
+
+        <div id="weekly-checklist-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+          <!-- Dynamische Checkboxen für beide Spieler -->
+        </div>
+      </div>
+    </div>
+
     <!-- 4. CLAN-DOJO -->
     <div class="card" style="border-left-color: var(--gold-primary);">
       <h2>
@@ -862,6 +915,130 @@
     ladeDashboardDaten();
     ladeFarmTargets();
     setInterval(ladeDashboardDaten, 4000);
+
+    // ==========================================
+    // LOGIK FÜR RESET-HUB & WOCHEN-CHECKLISTE
+    // ==========================================
+    const TASKS = [
+      { id: "riven_palladino", name: "Palladino (10 Scherben)" },
+      { id: "archon_hunt", name: "Archon-Jagd (Shard)" },
+      { id: "netracells_eda", name: "Netracells / EDA (5/5)" },
+      { id: "tasks_1999", name: "1999 Wochenkalender" }
+    ];
+
+    let globalRivenCount = 0;
+
+    // 1. TÄGLICHER RESET-TIMER (00:00 UTC)
+    function updateDailyResetTimer() {
+      const now = new Date();
+      const resetTime = new Date();
+      resetTime.setUTCHours(24, 0, 0, 0); // Nächster Reset um 00:00 UTC
+
+      const diffMs = resetTime - now;
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      const el = document.getElementById("reset-daily-timer");
+      if (el) {
+        el.innerText = `Reset in ${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      }
+    }
+    setInterval(updateDailyResetTimer, 1000);
+    updateDailyResetTimer();
+
+    // 2. DUVIRI-ROTATION & TAU-EVENT AUS DER OFFIZIELLEN WARFRAME-API LADEN
+    async function ladeWorldstateDaten() {
+      try {
+        const res = await fetch("https://api.warframestat.us/pc/duviriCycle");
+        if (res.ok) {
+          const duviri = await res.json();
+          const rotationEl = document.getElementById("duviri-rotation-text");
+          if (rotationEl && duviri.choices) {
+            rotationEl.innerHTML = `<strong>Frames:</strong> ${duviri.choices.join(', ')}`;
+          }
+        }
+
+        // Event-Status prüfen
+        const resEvents = await fetch("https://api.warframestat.us/pc/events");
+        if (resEvents.ok) {
+          const events = await resEvents.json();
+          const tauEvent = events.find(e => e.description && e.description.toLowerCase().includes("tau"));
+          if (tauEvent) {
+            document.getElementById("tau-desc").innerText = `${tauEvent.description} (Endet: ${new Date(tauEvent.expiry).toLocaleDateString()})`;
+            document.getElementById("tau-badge").className = "badge status-ready";
+            document.getElementById("tau-badge").innerText = "AKTIV 🔥";
+          }
+        }
+      } catch (err) {
+        console.warn("Worldstate API Fehler:", err);
+      }
+    }
+    ladeWorldstateDaten();
+
+    // 3. WOCHEN-CHECKLISTE LADEN & SYNCHRONISIEREN
+    async function ladeWeeklyChecklist() {
+      const container = document.getElementById("weekly-checklist-grid");
+      if (!container) return;
+
+      const { data: listData } = await supabaseClient.from("weekly_checklist").select("*");
+
+      // Riven-Scherben Stand holen
+      const rivenEntry = (listData || []).find(d => d.task_id === "riven_palladino");
+      if (rivenEntry) {
+        globalRivenCount = rivenEntry.riven_count || 0;
+        const countEl = document.getElementById("riven-shard-count");
+        if (countEl) countEl.innerText = globalRivenCount;
+      }
+
+      // Spieler aus player_status ziehen
+      const { data: players } = await supabaseClient.from("player_status").select("player_name");
+      const playerNames = players && players.length > 0 ? players.map(p => p.player_name) : ["Nexes92", "Partner"];
+
+      container.innerHTML = playerNames.map(player => `
+        <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+          <div style="font-weight: bold; font-size: 0.85rem; color: var(--cyan-primary); margin-bottom: 8px;">${player}</div>
+          ${TASKS.map(task => {
+            const entry = (listData || []).find(d => d.player_name === player && d.task_id === task.id);
+            const isDone = entry ? entry.is_done : false;
+
+            return `
+              <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleWeeklyTask('${player}', '${task.id}',${isDone})" style="cursor: pointer;">
+                <span>${task.name}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      `).join('');
+    }
+
+    async function toggleWeeklyTask(playerName, taskId, currentDone) {
+      await supabaseClient.from("weekly_checklist").upsert({
+        player_name: playerName,
+        task_id: taskId,
+        is_done: !currentDone,
+        riven_count: globalRivenCount,
+        updated_at: new Date().toISOString()
+      });
+      ladeWeeklyChecklist();
+    }
+
+    async function aendereRivenScherben(delta) {
+      globalRivenCount = Math.max(0, globalRivenCount + delta);
+      const countEl = document.getElementById("riven-shard-count");
+      if (countEl) countEl.innerText = globalRivenCount;
+
+      await supabaseClient.from("weekly_checklist").upsert({
+        player_name: "Global",
+        task_id: "riven_palladino",
+        riven_count: globalRivenCount,
+        updated_at: new Date().toISOString()
+      });
+    }
+
+    // Beim Start aufrufen
+    ladeWeeklyChecklist();
   </script>
 </body>
 </html>
