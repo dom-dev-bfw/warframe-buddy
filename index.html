@@ -629,11 +629,6 @@
     }
     initFarmAutocomplete();
 
-    function getWarframeImageUrl(query) {
-      const cleaned = query.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
-      return `https://cdn.warframestat.us/img/${cleaned}.png`;
-    }
-
     let currentFarmTab = 'active';
 
     function switchFarmTab(tab) {
@@ -681,14 +676,18 @@
         const totalCount = (t.parts || []).length;
         const percent = Math.round(t.progress * 100);
 
+        // Fallback-Bild, falls URL ins Leere läuft
+        const fallbackImg = "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
+        const imgSrc = t.image_url || fallbackImg;
+
         return `
         <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <img src="${t.image_url || getWarframeImageUrl(t.item_name)}" 
+              <img src="${imgSrc}" 
                    style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
                    alt="${t.item_name}" 
-                   onerror="this.onerror=null; this.src='https://cdn.warframestat.us/img/' + this.alt.toLowerCase().replace(/[^a-z0-9]/g, '-') + '.png';">
+                   onerror="this.onerror=null; this.src='https://wiki.warframe.com/images/thumb/7/77/Lotus_Symbol.png/64px-Lotus_Symbol.png';">
               <div>
                 <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
                 <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
@@ -702,7 +701,7 @@
             </div>
 
             <!-- Klickbare Bauteil-Chips -->
-            <div style="display: flex; wrap: wrap; gap: 6px; margin-bottom: 15px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
               ${(t.parts || []).map((p, idx) => {
                 const bg = p.owned ? '#1b4332' : 'rgba(255, 255, 255, 0.05)';
                 const border = p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)';
@@ -776,26 +775,73 @@
       ladeFarmTargets();
     }
 
+    // INTELLIGENTES HINZUFÜGEN MIT ECHTER API-ABFRAGE FÜR BILD & SPEZIFISCHE BAUTEILE
     async function addFarmTargetFromInput() {
       const input = document.getElementById('farm-search-input');
       const query = input.value.trim();
       const playerName = document.getElementById('farm-player-select').value;
       if (!query) return;
 
-      const defaultParts = [
-        { name: "Blaupause", owned: false },
-        { name: "Chassis", owned: false },
-        { name: "Neuroptik", owned: false },
-        { name: "Systeme", owned: false }
-      ];
+      let parts = [];
+      let imageUrl = null;
+      let finalName = query;
 
-      const imageUrl = getWarframeImageUrl(query);
+      try {
+        // Echtzeit-Suche in der Warframe API
+        const res = await fetch(`https://api.warframestat.us/items/search/${encodeURIComponent(query)}`);
+        if (res.ok) {
+          const items = await res.json();
+          // Exakten Treffer oder ersten relevanten Treffer finden
+          const match = items.find(i => i.name.toLowerCase() === query.toLowerCase()) || items[0];
 
+          if (match) {
+            finalName = match.name;
+            // Bild-URL aus API beziehen
+            if (match.imageName) {
+              imageUrl = `https://cdn.warframestat.us/img/${match.imageName}`;
+            }
+
+            // Spezifische Bauteile aus der API filtern
+            if (match.components && match.components.length > 0) {
+              parts = match.components
+                .filter(c => !c.name.toLowerCase().includes("orokin-zelle") && !c.name.toLowerCase().includes("argon")) // Nur Kernteile, keine einfachen Rohstoffe
+                .map(c => ({ name: c.name, owned: false }));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Konnte API-Daten nicht abrufen, nutze Standard-Werte:", e);
+      }
+
+      // Fallback für Bauteile, falls API keine spezifischen Komponenten gelistet hat
+      if (parts.length === 0) {
+        const isWeapon = query.toLowerCase().includes("torid") || query.toLowerCase().includes("lex") || 
+                         query.toLowerCase().includes("braton") || query.toLowerCase().includes("orthos") ||
+                         query.toLowerCase().includes("glaive") || query.toLowerCase().includes("acceltra") ||
+                         query.toLowerCase().includes("dorrclave");
+
+        if (isWeapon) {
+          parts = [
+            { name: "Blaupause", owned: false },
+            { name: "Lauf / Klinge", owned: false },
+            { name: "Gehäuse / Griff", owned: false }
+          ];
+        } else {
+          parts = [
+            { name: "Blaupause", owned: false },
+            { name: "Chassis", owned: false },
+            { name: "Neuroptik", owned: false },
+            { name: "Systeme", owned: false }
+          ];
+        }
+      }
+
+      // Eintrag in Supabase speichern
       await supabaseClient.from('farm_targets').insert([{
         player_name: playerName,
-        item_name: query,
+        item_name: finalName,
         image_url: imageUrl,
-        parts: defaultParts,
+        parts: parts,
         is_completed: false
       }]);
 
