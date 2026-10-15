@@ -1,4 +1,9 @@
-# Lokale Konfigurationen & Secrets
+# PyInstaller Build- und Ausgabeverzeichnisse
+build/
+dist/
+*.spec
+
+# Lokale Konfigurationen & Keys
 .env
 *.env
 config.local.json
@@ -6,8 +11,15 @@ config.local.json
 # Python Cache & virtuelle Umgebungen
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 venv/
 .venv/
+env/
+
+# IDE & Editor-Dateien
+.vscode/
+.idea/
 
 # Betriebssystem-Dateien
 Thumbs.db
