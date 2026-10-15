@@ -50,7 +50,13 @@ def check_arc_raiders_news():
             }
         }
 
-        payload = {"embeds": [embed]}
+        # Eigenes Bot-Branding für ARC Raiders
+        payload = {
+            "username": "ARC Raider HQ",
+            "avatar_url": "https://cdn.cloudflare.steamstatic.com/steam/apps/1808500/header.jpg",
+            "embeds": [embed]
+        }
+
         res = requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=10)
         if res.status_code in (200, 204):
             print("ARC Raiders News erfolgreich gesendet!")

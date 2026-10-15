@@ -1,0 +1,14 @@
+# Lokale Konfigurationen & Secrets
+.env
+*.env
+config.local.json
+
+# Python Cache & virtuelle Umgebungen
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Betriebssystem-Dateien
+Thumbs.db
+.DS_Store
