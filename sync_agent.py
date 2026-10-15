@@ -5,15 +5,18 @@ import time
 import requests
 from datetime import datetime, timezone
 from pathlib import Path
+from dotenv import load_dotenv
 from supabase import create_client, Client
+
+# Lädt die Variablen aus der lokalen .env Datei
+load_dotenv()
 
 # ==========================================
 # KONFIGURATION & CLOUD-VERBINDUNG
 # ==========================================
-SUPABASE_URL = "https://cvtdjitedrlfgzxkzjaj.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2dGRqaXRlZHJsZmd6eGt6amFqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4NDk4NjYsImV4cCI6MjEwNjQyNTg2Nn0.i4VJ-7aLcoGCPiPUwQBwKzTQrccr6fFfY0fSSPFYyko"
-
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1555479757494157342/1D_qLZ8VQH3r7kZw4ipP9BcQzETcYp2gdRX0XZ5_qeby-oPkqIxVDUFd_WdDuuU8WMdU"
+SUPABASE_URL = os.getenv("SUPABASE_URL", "https://cvtdjitedrlfgzxkzjaj.supabase.co")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 DASHBOARD_URL = "https://dom-dev-bfw.github.io/warframe-buddy/"
 
 print("========================================")
