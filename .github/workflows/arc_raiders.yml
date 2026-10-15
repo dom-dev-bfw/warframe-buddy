@@ -23,5 +23,5 @@ jobs:
 
       - name: News abrufen & senden
         env:
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.ARC_DISCORD_WEBHOOK_URL }}
         run: python arc_raiders_notifier.py
