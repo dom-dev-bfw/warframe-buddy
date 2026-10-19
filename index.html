@@ -399,11 +399,11 @@
       </div>
     </div>
 
-    <!-- 5. CLAN-DOJO -->
+    <!-- 5. CLAN-DOJO & FORSCHUNGS-TRACKER -->
     <div class="card" style="border-left-color: var(--gold-primary);">
       <h2>
-        <span>🏰 Clan-Dojo</span>
-        <span class="badge" style="background: rgba(229, 185, 92, 0.15); color: var(--gold-primary); border: 1px solid var(--gold-primary);">XP TRACKER</span>
+        <span>🏰 Clan-Dojo & Forschungen</span>
+        <span class="badge" style="background: rgba(229, 185, 92, 0.15); color: var(--gold-primary); border: 1px solid var(--gold-primary);">DOJO DB</span>
       </h2>
       <div class="info-row">
         <span class="label">Clan:</span>
@@ -425,6 +425,17 @@
       <div class="info-row">
         <span class="label">Status:</span>
         <span class="val" id="clan-levelup">-</span>
+      </div>
+
+      <!-- Live Dojo-Forschungsliste aus Supabase (dojo_research) -->
+      <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+          <span style="font-size: 0.85rem; color: var(--gold-primary); font-weight: bold; text-transform: uppercase;">🧪 Aktive & Offene Forschungen</span>
+          <span id="research-count-badge" style="font-size: 0.75rem; color: var(--text-dim);">Lade Forschungen...</span>
+        </div>
+        <div id="dojo-research-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px;">
+          <!-- Wird per JS dynamisch befüllt -->
+        </div>
       </div>
     </div>
 
@@ -614,6 +625,52 @@
             levelUpText.innerText = "Forschung läuft";
           }
         }
+
+// ==========================================
+    // DOJO FORSCHUNGS-TRACKER (dojo_research)
+    // ==========================================
+    async function ladeDojoForschungen() {
+      const container = document.getElementById("dojo-research-list");
+      const badge = document.getElementById("research-count-badge");
+      if (!container) return;
+
+      const { data: researches, error } = await supabaseClient
+        .from("dojo_research")
+        .select("*")
+        .order("is_completed", { ascending: true });
+
+      if (error || !researches) {
+        console.warn("Fehler beim Laden von dojo_research:", error);
+        container.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-dim);">Keine Einträge in dojo_research gefunden.</div>';
+        return;
+      }
+
+      const completed = researches.filter(r => r.is_completed).length;
+      if (badge) badge.innerText = `${completed} / ${researches.length} Erforscht`;
+
+      container.innerHTML = researches.map(r => `
+        <div style="background: rgba(0,0,0,0.4); border: 1px solid ${r.is_completed ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.85rem; font-weight: bold; color: ${r.is_completed ? 'var(--text-dim)' : '#fff'}; text-decoration: ${r.is_completed ? 'line-through' : 'none'};">
+              ${r.item_name || r.name || 'Forschung'}
+            </div>
+            <div style="font-size: 0.7rem; color: var(--cyan-primary);">${r.lab || 'Labor'}</div>
+          </div>
+          <button onclick="toggleResearchStatus(${r.id}, ${r.is_completed})" class="btn-counter" style="font-size: 0.75rem; border-color: ${r.is_completed ? 'var(--status-green)' : 'rgba(255,255,255,0.2)'};">
+            ${r.is_completed ? '✓ Fertig' : 'Erforschen'}
+          </button>
+        </div>
+      `).join('');
+    }
+
+    async function toggleResearchStatus(id, currentStatus) {
+      await supabaseClient
+        .from("dojo_research")
+        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      ladeDojoForschungen();
+      ladeDashboardDaten();
+    }
 
         // 3. KAMPAGNE & DEIMOS FOKUS (Cetus & Fortuna sauber entfernt)
         const { data: campaignData } = await supabaseClient
@@ -1147,9 +1204,11 @@
     // ==========================================
     async function initDashboard() {
       await ladeDashboardDaten();
+      await ladeDuoMondfleisch();
       await ladeWeeklyChecklist();
       await ladeSyndikatsMatrix();
       await ladeFarmTargets();
+      await ladeDojoForschungen(); // <-- Hier hinzufügen!
       ladeWorldstateDaten();
     }
 
