@@ -996,28 +996,59 @@
       }, { onConflict: 'player_name,task_id' });
     }
 
+    // ==========================================
+    // DUVIRI & WORLDSTATE (MIT AUTOMATISCHEM ROTATIONS-SYNC)
+    // ==========================================
+    const DUVIRI_FRAME_ROTATION = [
+      ["Excalibur", "Trinity", "Ember"],
+      ["Lokis", "Mag", "Rhino"],
+      ["Ash", "Frost", "Nyx"],
+      ["Saryn", "Vauban", "Nova"],
+      ["Nekros", "Valkyr", "Oberon"],
+      ["Hydroid", "Mirage", "Limbo"],
+      ["Mesa", "Chroma", "Atlas"],
+      ["Ivara", "Inaros", "Titania"],
+      ["Nidus", "Octavia", "Harrow"],
+      ["Gara", "Khora", "Revenant"],
+      ["Garuda", "Baruuk", "Hildryn"]
+    ];
+
+    function ermittleLokaleDuviriRotation() {
+      const basisDatum = new Date("2024-01-08T00:00:00Z").getTime();
+      const jetzt = Date.now();
+      const wochenVergangen = Math.floor((jetzt - basisDatum) / (7 * 24 * 60 * 60 * 1000));
+      const rotationsIndex = ((wochenVergangen % 11) + 11) % 11;
+      return DUVIRI_FRAME_ROTATION[rotationsIndex];
+    }
+
     async function ladeWorldstateDaten() {
+      const rotationEl = document.getElementById("duviri-rotation-text");
+
       try {
         const res = await fetch("https://api.warframestat.us/pc/duviriCycle");
         if (res.ok) {
           const duviri = await res.json();
-          const rotationEl = document.getElementById("duviri-rotation-text");
-          if (rotationEl && duviri.choices) {
-            let frameNames = [];
-            if (Array.isArray(duviri.choices)) {
-              duviri.choices.forEach(c => {
-                if (typeof c === 'string') frameNames.push(c);
-                else if (c && Array.isArray(c.choices)) frameNames.push(...c.choices);
-                else if (c && c.name) frameNames.push(c.name);
-              });
-            }
-            if (frameNames.length > 0) {
-              rotationEl.innerHTML = `<strong>Frames:</strong> ${frameNames.join(', ')}`;
-            }
+          let frameNames = [];
+
+          if (Array.isArray(duviri.choices)) {
+            frameNames = duviri.choices
+              .map(c => (typeof c === "string" ? c : (c.name || c.value || "")))
+              .filter(Boolean);
+          }
+
+          if (frameNames.length > 0 && rotationEl) {
+            rotationEl.innerHTML = `<strong>Frames:</strong> ${frameNames.join(", ")}`;
+            return;
           }
         }
       } catch (err) {
-        console.warn("Worldstate API Fehler:", err);
+        console.warn("Warframe API nicht erreichbar, nutze Rotations-Kalender:", err);
+      }
+
+      // Automatischer Fallback, falls API leer oder offline ist
+      if (rotationEl) {
+        const fallbackFrames = ermittleLokaleDuviriRotation();
+        rotationEl.innerHTML = `<strong>Frames:</strong> ${fallbackFrames.join(", ")} <span style="font-size:0.75rem; color:var(--text-dim);">(Kalender-Sync)</span>`;
       }
     }
 
