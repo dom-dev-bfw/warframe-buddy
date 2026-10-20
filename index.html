@@ -524,11 +524,11 @@
       return "Endstand erreicht 🎉";
     }
 
-    // ==========================================
-    // 1. SPIELER-STATUS & DYNAMISCHE STANDING-CAPS
-    // ==========================================
     let cachedPlayers = [];
 
+    // ==========================================
+    // 1. SPIELER-STATUS & DOJO-XP & KAMPAGNE
+    // ==========================================
     async function ladeDashboardDaten() {
       try {
         const { data: allPlayers } = await supabaseClient
@@ -539,9 +539,8 @@
         if (allPlayers && allPlayers.length > 0) {
           cachedPlayers = allPlayers;
           const grid = document.getElementById('players-grid');
-          grid.innerHTML = '';
+          if (grid) grid.innerHTML = '';
 
-          // Dropdown für Farm-Ziele automatisch befüllen
           const playerSelect = document.getElementById('farm-player-select');
           if (playerSelect) {
             const currentSelected = playerSelect.value;
@@ -550,12 +549,10 @@
             ).join('');
           }
 
-          // Dynamische Standing-Caps berechnen
           const capsContainer = document.getElementById('standing-caps-list');
           if (capsContainer) {
             capsContainer.innerHTML = allPlayers.map(p => {
-              // Standard MR: Nexes92 = 15, Partner/Mentor = 28 falls nicht gesetzt
-              const mr = p.mastery_rank || (p.player_name === 'Nexes92' ? 15 : 28);
+              const mr = p.mastery_rank || (p.player_name.toLowerCase() === 'nexes92' ? 16 : 14);
               const cap = 16000 + (mr * 750);
               return `
                 <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
@@ -579,21 +576,23 @@
             const locationText = isOnline ? (player.current_location || '-') : 'Offline';
             const activityText = isOnline ? (player.last_activity || '-') : 'Zuletzt gesehen';
 
-            grid.innerHTML += `
-              <div class="card" style="margin-bottom:0;">
-                <h2>
-                  <span>👤 ${player.player_name}</span>
-                  <span class="${badgeClass}">${badgeText}</span>
-                </h2>
-                <div class="info-row"><span class="label">Ort:</span><span class="val" style="color:var(--cyan-primary);">${locationText}</span></div>
-                <div class="info-row"><span class="label">Aktivität:</span><span class="val">${activityText}</span></div>
-                <div class="info-row"><span class="label">Zeit:</span><span class="val" style="font-size:0.8rem; color:var(--text-dim);">${timeStr}</span></div>
-              </div>
-            `;
+            if (grid) {
+              grid.innerHTML += `
+                <div class="card" style="margin-bottom:0;">
+                  <h2>
+                    <span>👤 ${player.player_name}</span>
+                    <span class="${badgeClass}">${badgeText}</span>
+                  </h2>
+                  <div class="info-row"><span class="label">Ort:</span><span class="val" style="color:var(--cyan-primary);">${locationText}</span></div>
+                  <div class="info-row"><span class="label">Aktivität:</span><span class="val">${activityText}</span></div>
+                  <div class="info-row"><span class="label">Zeit:</span><span class="val" style="font-size:0.8rem; color:var(--text-dim);">${timeStr}</span></div>
+                </div>
+              `;
+            }
           });
         }
 
-        // 2. DOJO-INFO
+        // DOJO-INFO
         const { data: dojoData } = await supabaseClient
           .from('dojo_info')
           .select('*')
@@ -626,53 +625,7 @@
           }
         }
 
-// ==========================================
-    // DOJO FORSCHUNGS-TRACKER (dojo_research)
-    // ==========================================
-    async function ladeDojoForschungen() {
-      const container = document.getElementById("dojo-research-list");
-      const badge = document.getElementById("research-count-badge");
-      if (!container) return;
-
-      const { data: researches, error } = await supabaseClient
-        .from("dojo_research")
-        .select("*")
-        .order("is_completed", { ascending: true });
-
-      if (error || !researches) {
-        console.warn("Fehler beim Laden von dojo_research:", error);
-        container.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-dim);">Keine Einträge in dojo_research gefunden.</div>';
-        return;
-      }
-
-      const completed = researches.filter(r => r.is_completed).length;
-      if (badge) badge.innerText = `${completed} / ${researches.length} Erforscht`;
-
-      container.innerHTML = researches.map(r => `
-        <div style="background: rgba(0,0,0,0.4); border: 1px solid ${r.is_completed ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div style="font-size: 0.85rem; font-weight: bold; color: ${r.is_completed ? 'var(--text-dim)' : '#fff'}; text-decoration: ${r.is_completed ? 'line-through' : 'none'};">
-              ${r.item_name || r.name || 'Forschung'}
-            </div>
-            <div style="font-size: 0.7rem; color: var(--cyan-primary);">${r.lab || 'Labor'}</div>
-          </div>
-          <button onclick="toggleResearchStatus(${r.id}, ${r.is_completed})" class="btn-counter" style="font-size: 0.75rem; border-color: ${r.is_completed ? 'var(--status-green)' : 'rgba(255,255,255,0.2)'};">
-            ${r.is_completed ? '✓ Fertig' : 'Erforschen'}
-          </button>
-        </div>
-      `).join('');
-    }
-
-    async function toggleResearchStatus(id, currentStatus) {
-      await supabaseClient
-        .from("dojo_research")
-        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
-        .eq("id", id);
-      ladeDojoForschungen();
-      ladeDashboardDaten();
-    }
-
-        // 3. KAMPAGNE & DEIMOS FOKUS (Cetus & Fortuna sauber entfernt)
+        // KAMPAGNE & DEIMOS
         const { data: campaignData } = await supabaseClient
           .from('campaign_progress')
           .select('*')
@@ -680,49 +633,49 @@
 
         if (campaignData) {
           const campGrid = document.getElementById('campaign-grid');
-          campGrid.innerHTML = '';
+          if (campGrid) {
+            campGrid.innerHTML = '';
+            campaignData.forEach(c => {
+              let questOptionsHtml = '';
+              QUEST_LISTE.forEach(q => {
+                questOptionsHtml += `<option value="${q}" ${q === c.current_quest ? 'selected' : ''}>${q}</option>`;
+              });
 
-          campaignData.forEach(c => {
-            let questOptionsHtml = '';
-            QUEST_LISTE.forEach(q => {
-              questOptionsHtml += `<option value="${q}" ${q === c.current_quest ? 'selected' : ''}>${q}</option>`;
+              campGrid.innerHTML += `
+                <div style="background: rgba(0,0,0,0.4); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
+                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px; margin-bottom:12px;">
+                    <h3 style="margin:0; font-size:1.05rem; color:var(--cyan-primary); letter-spacing:0.5px;">⚔️ ${c.player_name}</h3>
+                    <span class="badge ${c.quest_status === 'Abgeschlossen' ? 'status-ready' : 'status-tausch'}" style="cursor:pointer;" onclick="toggleQuestStatus(${c.id}, '${c.quest_status || 'Aktiv'}')">
+                      ${c.quest_status || 'Aktiv'} 🔄
+                    </span>
+                  </div>
+
+                  <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Aktuelle Hauptquest:</span>
+                      <select onchange="aendereQuest(${c.id}, this.value)" style="background:rgba(0,0,0,0.6); color:var(--cyan-primary); border:1px solid rgba(0,229,255,0.3); font-size:0.75rem; padding:3px 6px; border-radius:6px;">
+                        ${questOptionsHtml}
+                      </select>
+                    </div>
+                    <div style="font-size:1.05rem; font-weight:bold; color:#fff; margin:6px 0 2px 0;">📜 ${c.current_quest || 'Der Zweite Traum'}</div>
+                    <div style="font-size:0.82rem; color:var(--text-dim);">
+                      Nächste Quest: <span style="color:var(--gold-primary); font-weight:600;">${c.next_quest || holeNaechsteQuest(c.current_quest)}</span>
+                    </div>
+                  </div>
+
+                  <div class="info-row">
+                    <span class="label">🪙 Mutter-Marken (Vorrat):</span>
+                    <span class="val">
+                      <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, -10)">-10</button>
+                      <span class="highlight" style="display:inline-block; min-width:35px; text-align:center;">${c.mother_tokens}</span>
+                      <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, 10)">+10</button>
+                    </span>
+                  </div>
+                </div>
+              `;
             });
-
-            campGrid.innerHTML += `
-              <div style="background: rgba(0,0,0,0.4); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px; margin-bottom:12px;">
-                  <h3 style="margin:0; font-size:1.05rem; color:var(--cyan-primary); letter-spacing:0.5px;">⚔️ ${c.player_name}</h3>
-                  <span class="badge ${c.quest_status === 'Abgeschlossen' ? 'status-ready' : 'status-tausch'}" style="cursor:pointer;" onclick="toggleQuestStatus(${c.id}, '${c.quest_status || 'Aktiv'}')">
-                    ${c.quest_status || 'Aktiv'} 🔄
-                  </span>
-                </div>
-
-                <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
-                  <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Aktuelle Hauptquest:</span>
-                    <select onchange="aendereQuest(${c.id}, this.value)" style="background:rgba(0,0,0,0.6); color:var(--cyan-primary); border:1px solid rgba(0,229,255,0.3); font-size:0.75rem; padding:3px 6px; border-radius:6px;">
-                      ${questOptionsHtml}
-                    </select>
-                  </div>
-                  <div style="font-size:1.05rem; font-weight:bold; color:#fff; margin:6px 0 2px 0;">📜 ${c.current_quest || 'Der Zweite Traum'}</div>
-                  <div style="font-size:0.82rem; color:var(--text-dim);">
-                    Nächste Quest: <span style="color:var(--gold-primary); font-weight:600;">${c.next_quest || holeNaechsteQuest(c.current_quest)}</span>
-                  </div>
-                </div>
-
-                <div class="info-row">
-                  <span class="label">🪙 Mutter-Marken (Vorrat):</span>
-                  <span class="val">
-                    <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, -10)">-10</button>
-                    <span class="highlight" style="display:inline-block; min-width:35px; text-align:center;">${c.mother_tokens}</span>
-                    <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, 10)">+10</button>
-                  </span>
-                </div>
-              </div>
-            `;
-          });
+          }
         }
-
       } catch (err) {
         console.error("Dashboard-Fehler:", err);
       }
@@ -753,15 +706,16 @@
     }
 
     // ==========================================
-    // 2. 🏛️ SYNDIKATS-MATRIX (DUO-VERGLEICH) - STABIL & ROBUST
+    // 2. 🏛️ SYNDIKATS-MATRIX (DUO-VERGLEICH)
     // ==========================================
     async function ladeSyndikatsMatrix() {
       try {
         const { data: allRanks } = await supabaseClient.from('syndicate_ranks').select('*');
         const ranksMap = {};
         (allRanks || []).forEach(r => {
-          // Groß-/Kleinschreibung ignorieren für maximale Trefferquote
-          ranksMap[`${r.player_name.toLowerCase()}_${r.syndicate_id}`] = r.rank;
+          if (r.player_name && r.syndicate_id) {
+            ranksMap[`${r.player_name.toLowerCase()}_${r.syndicate_id}`] = r.rank;
+          }
         });
 
         const p1 = "Nexes92";
@@ -816,12 +770,74 @@
         syndicate_id: syndicateId,
         rank: parseInt(rankValue, 10),
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'player_name,syndicate_id' });
       ladeSyndikatsMatrix();
     }
 
     // ==========================================
-    // 3. ⚡ RESET-HUB MIT AUTOMATISCHEM MONTAGS-RESET
+    // 3. 🧪 DOJO FORSCHUNGS-TRACKER (dojo_research)
+    // ==========================================
+    async function ladeDojoForschungen() {
+      const container = document.getElementById("dojo-research-list");
+      const badge = document.getElementById("research-count-badge");
+      if (!container) return;
+
+      try {
+        const { data: researches, error } = await supabaseClient
+          .from("dojo_research")
+          .select("*");
+
+        if (error) {
+          console.warn("Dojo Research DB Fehler:", error);
+          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--status-red); grid-column: 1/-1;">Supabase: ${error.message}</div>`;
+          if (badge) badge.innerText = "Fehler";
+          return;
+        }
+
+        if (!researches || researches.length === 0) {
+          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--text-dim); grid-column: 1/-1;">Tabelle 'dojo_research' ist leer.</div>`;
+          if (badge) badge.innerText = "0 Forschungen";
+          return;
+        }
+
+        const completed = researches.filter(r => r.is_completed).length;
+        if (badge) badge.innerText = `${completed} / ${researches.length} Erforscht`;
+
+        container.innerHTML = researches.map(r => {
+          const name = r.item_name || r.name || "Unbekannt";
+          const lab = r.lab || r.category || "Labor";
+          const isDone = !!r.is_completed;
+
+          return `
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid ${isDone ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: bold; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                  ${name}
+                </div>
+                <div style="font-size: 0.7rem; color: var(--cyan-primary);">${lab}</div>
+              </div>
+              <button onclick="toggleResearchStatus(${r.id}, ${isDone})" class="btn-counter" style="font-size: 0.75rem; border-color: ${isDone ? 'var(--status-green)' : 'rgba(255,255,255,0.2)'};">
+                ${isDone ? '✓ Fertig' : 'Erforschen'}
+              </button>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Unerwarteter Fehler bei dojo_research:", err);
+      }
+    }
+
+    async function toggleResearchStatus(id, currentStatus) {
+      await supabaseClient
+        .from("dojo_research")
+        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      ladeDojoForschungen();
+      ladeDashboardDaten();
+    }
+
+    // ==========================================
+    // 4. ⚡ RESET-HUB MIT MONTAGS-RESET
     // ==========================================
     const TASKS = [
       { id: "riven_palladino", name: "Palladino (10 Scherben)" },
@@ -850,61 +866,61 @@
     setInterval(updateDailyResetTimer, 1000);
     updateDailyResetTimer();
 
-    // Berechnet den Timestamp des letzten Montags 00:00 UTC
     function getLetzterMontagUTC() {
       const d = new Date();
       const day = d.getUTCDay();
       const diff = d.getUTCDate() - day + (day === 0 ? -6 : 1);
-      const montag = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), diff, 0, 0, 0, 0));
-      return montag.getTime();
+      return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), diff, 0, 0, 0, 0)).getTime();
     }
 
     async function ladeWeeklyChecklist() {
       const container = document.getElementById("weekly-checklist-grid");
       if (!container) return;
 
-      const { data: listData } = await supabaseClient.from("weekly_checklist").select("*");
-      const letzterMontag = getLetzterMontagUTC();
+      try {
+        const { data: listData } = await supabaseClient.from("weekly_checklist").select("*");
+        const letzterMontag = getLetzterMontagUTC();
 
-      // Automatischer Reset, falls Einträge aus der Vorwoche stammen
-      if (listData && listData.length > 0) {
-        for (const item of listData) {
-          const itemUpdate = item.updated_at ? new Date(item.updated_at).getTime() : 0;
-          if (item.is_done && itemUpdate < letzterMontag) {
-            await supabaseClient.from("weekly_checklist").update({
-              is_done: false,
-              updated_at: new Date().toISOString()
-            }).match({ player_name: item.player_name, task_id: item.task_id });
+        if (listData && listData.length > 0) {
+          for (const item of listData) {
+            const itemUpdate = item.updated_at ? new Date(item.updated_at).getTime() : 0;
+            if (item.is_done && itemUpdate < letzterMontag) {
+              await supabaseClient.from("weekly_checklist").update({
+                is_done: false,
+                updated_at: new Date().toISOString()
+              }).match({ player_name: item.player_name, task_id: item.task_id });
+            }
           }
         }
+
+        const rivenEntry = (listData || []).find(d => d.task_id === "riven_palladino");
+        if (rivenEntry) {
+          globalRivenCount = rivenEntry.riven_count || 0;
+          const countEl = document.getElementById("riven-shard-count");
+          if (countEl) countEl.innerText = globalRivenCount;
+        }
+
+        const playerNames = cachedPlayers.length > 0 ? cachedPlayers.map(p => p.player_name) : ["Nexes92", "SonofImperator"];
+
+        container.innerHTML = playerNames.map(player => `
+          <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-weight: bold; font-size: 0.85rem; color: var(--cyan-primary); margin-bottom: 8px;">${player}</div>
+            ${TASKS.map(task => {
+              const entry = (listData || []).find(d => d.player_name.toLowerCase() === player.toLowerCase() && d.task_id === task.id);
+              const isDone = entry ? entry.is_done : false;
+
+              return `
+                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                  <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleWeeklyTask('${player}', '${task.id}',${isDone})" style="cursor: pointer;">
+                  <span>${task.name}</span>
+                </label>
+              `;
+            }).join('')}
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error("Fehler bei Checkliste:", e);
       }
-
-      // Riven-Scherben Stand holen
-      const rivenEntry = (listData || []).find(d => d.task_id === "riven_palladino");
-      if (rivenEntry) {
-        globalRivenCount = rivenEntry.riven_count || 0;
-        const countEl = document.getElementById("riven-shard-count");
-        if (countEl) countEl.innerText = globalRivenCount;
-      }
-
-      const playerNames = cachedPlayers.length > 0 ? cachedPlayers.map(p => p.player_name) : ["Nexes92", "Partner"];
-
-      container.innerHTML = playerNames.map(player => `
-        <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-          <div style="font-weight: bold; font-size: 0.85rem; color: var(--cyan-primary); margin-bottom: 8px;">${player}</div>
-          ${TASKS.map(task => {
-            const entry = (listData || []).find(d => d.player_name === player && d.task_id === task.id);
-            const isDone = entry ? entry.is_done : false;
-
-            return `
-              <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
-                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleWeeklyTask('${player}', '${task.id}',${isDone})" style="cursor: pointer;">
-                <span>${task.name}</span>
-              </label>
-            `;
-          }).join('')}
-        </div>
-      `).join('');
     }
 
     async function toggleWeeklyTask(playerName, taskId, currentDone) {
@@ -914,7 +930,7 @@
         is_done: !currentDone,
         riven_count: globalRivenCount,
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'player_name,task_id' });
       ladeWeeklyChecklist();
     }
 
@@ -928,7 +944,7 @@
         task_id: "riven_palladino",
         riven_count: globalRivenCount,
         updated_at: new Date().toISOString()
-      });
+      }, { onConflict: 'player_name,task_id' });
     }
 
     async function ladeWorldstateDaten() {
@@ -939,24 +955,15 @@
           const rotationEl = document.getElementById("duviri-rotation-text");
           if (rotationEl && duviri.choices) {
             let frameNames = [];
-
-            // Prüfen, ob choices Objekte oder Strings enthält
             if (Array.isArray(duviri.choices)) {
               duviri.choices.forEach(c => {
-                if (typeof c === 'string') {
-                  frameNames.push(c);
-                } else if (c && Array.isArray(c.choices)) {
-                  frameNames.push(...c.choices);
-                } else if (c && c.name) {
-                  frameNames.push(c.name);
-                }
+                if (typeof c === 'string') frameNames.push(c);
+                else if (c && Array.isArray(c.choices)) frameNames.push(...c.choices);
+                else if (c && c.name) frameNames.push(c.name);
               });
             }
-
             if (frameNames.length > 0) {
               rotationEl.innerHTML = `<strong>Frames:</strong> ${frameNames.join(', ')}`;
-            } else {
-              rotationEl.innerHTML = `<strong>Status:</strong> Rotation aktiv (Stufe lädt...)`;
             }
           }
         }
@@ -966,9 +973,13 @@
           const events = await resEvents.json();
           const tauEvent = events.find(e => e.description && e.description.toLowerCase().includes("tau"));
           if (tauEvent) {
-            document.getElementById("tau-desc").innerText = `${tauEvent.description} (Endet: ${new Date(tauEvent.expiry).toLocaleDateString()})`;
-            document.getElementById("tau-badge").className = "badge status-ready";
-            document.getElementById("tau-badge").innerText = "AKTIV 🔥";
+            const descEl = document.getElementById("tau-desc");
+            const badgeEl = document.getElementById("tau-badge");
+            if (descEl) descEl.innerText = `${tauEvent.description} (Endet: ${new Date(tauEvent.expiry).toLocaleDateString()})`;
+            if (badgeEl) {
+              badgeEl.className = "badge status-ready";
+              badgeEl.innerText = "AKTIV 🔥";
+            }
           }
         }
       } catch (err) {
@@ -977,7 +988,7 @@
     }
 
     // ==========================================
-    // 4. 🎯 VISUELLER DUO-FARM-TRACKER (HANGAR)
+    // 5. 🎯 VISUELLER FARM-TRACKER (HANGAR)
     // ==========================================
     const WF_SUGGESTIONS = [
       "Dagath", "Gauss Prime", "Gauss", "Grendel Prime", "Wisp Prime", "Khora Prime", 
@@ -1009,96 +1020,98 @@
 
     async function ladeFarmTargets() {
       const grid = document.getElementById('farm-grid');
+      if (!grid) return;
       const isCompleted = currentFarmTab === 'completed';
 
-      const { data: targets, error } = await supabaseClient
-        .from('farm_targets')
-        .select('*')
-        .eq('is_completed', isCompleted);
+      try {
+        const { data: targets, error } = await supabaseClient
+          .from('farm_targets')
+          .select('*')
+          .eq('is_completed', isCompleted);
 
-      if (error || !targets) {
-        grid.innerHTML = '<div style="color: var(--status-red);">Fehler beim Laden der Farm-Ziele.</div>';
-        return;
-      }
+        if (error || !targets) {
+          grid.innerHTML = '<div style="color: var(--status-red);">Fehler beim Laden der Farm-Ziele.</div>';
+          return;
+        }
 
-      if (targets.length === 0) {
-        grid.innerHTML = `<div style="color: var(--text-dim); grid-column: 1/-1; text-align: center; padding: 20px;">
-          ${isCompleted ? 'Noch keine archivierten Items in der Sammlung.' : 'Keine aktiven Farm-Ziele. Füge oben eins hinzu!'}
-        </div>`;
-        return;
-      }
+        if (targets.length === 0) {
+          grid.innerHTML = `<div style="color: var(--text-dim); grid-column: 1/-1; text-align: center; padding: 20px;">
+            ${isCompleted ? 'Noch keine archivierten Items in der Sammlung.' : 'Keine aktiven Farm-Ziele. Füge oben eins hinzu!'}
+          </div>`;
+          return;
+        }
 
-      targets.forEach(t => {
-        const owned = (t.parts || []).filter(p => p.owned).length;
-        t.progress = t.parts && t.parts.length > 0 ? (owned / t.parts.length) : 0;
-      });
+        targets.forEach(t => {
+          const owned = (t.parts || []).filter(p => p.owned).length;
+          t.progress = t.parts && t.parts.length > 0 ? (owned / t.parts.length) : 0;
+        });
 
-      if (!isCompleted) {
-        targets.sort((a, b) => b.progress - a.progress);
-      }
+        if (!isCompleted) {
+          targets.sort((a, b) => b.progress - a.progress);
+        }
 
-      grid.innerHTML = targets.map(t => {
-        const ownedCount = (t.parts || []).filter(p => p.owned).length;
-        const totalCount = (t.parts || []).length;
-        const percent = Math.round(t.progress * 100);
-        const imgSrc = t.image_url || "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
+        grid.innerHTML = targets.map(t => {
+          const ownedCount = (t.parts || []).filter(p => p.owned).length;
+          const totalCount = (t.parts || []).length;
+          const percent = Math.round(t.progress * 100);
+          const imgSrc = t.image_url || "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
 
-        return `
-        <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
-          <div>
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-              <img src="${imgSrc}" 
-                   style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
-                   alt="${t.item_name}" 
-                   onerror="this.onerror=null; this.src='https://wiki.warframe.com/images/thumb/7/77/Lotus_Symbol.png/64px-Lotus_Symbol.png';">
-              <div>
-                <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
-                <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
-                <div style="font-size: 0.8rem; color: var(--cyan-primary);">${ownedCount}/${totalCount} Teile (${percent}%)</div>
+          return `
+          <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <img src="${imgSrc}" 
+                     style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
+                     alt="${t.item_name}" 
+                     onerror="this.onerror=null; this.src='https://wiki.warframe.com/images/thumb/7/77/Lotus_Symbol.png/64px-Lotus_Symbol.png';">
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
+                  <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
+                  <div style="font-size: 0.8rem; color: var(--cyan-primary);">${ownedCount}/${totalCount} Teile (${percent}%)</div>
+                </div>
+              </div>
+
+              <div style="width: 100%; height: 5px; background: #222; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+                <div style="width: ${percent}%; height: 100%; background: ${percent === 100 ? 'var(--gold-primary)' : 'var(--cyan-primary)'}; transition: width 0.3s;"></div>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
+                ${(t.parts || []).map((p, idx) => {
+                  const bg = p.owned ? '#1b4332' : 'rgba(255, 255, 255, 0.05)';
+                  const border = p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)';
+                  const col = p.owned ? 'var(--status-green)' : 'var(--text-dim)';
+                  return `
+                  <button onclick="toggleFarmPart(${t.id},${idx})" 
+                          style="background: ${bg}; border: 1px solid ${border}; color:${col}; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                    ${p.owned ? '✓ ' : ''}${p.name}
+                  </button>
+                  `;
+                }).join('')}
               </div>
             </div>
 
-            <!-- Fortschrittsbalken -->
-            <div style="width: 100%; height: 5px; background: #222; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
-              <div style="width: ${percent}%; height: 100%; background: ${percent === 100 ? 'var(--gold-primary)' : 'var(--cyan-primary)'}; transition: width 0.3s;"></div>
-            </div>
-
-            <!-- Klickbare Bauteil-Chips -->
-            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
-              ${(t.parts || []).map((p, idx) => {
-                const bg = p.owned ? '#1b4332' : 'rgba(255, 255, 255, 0.05)';
-                const border = p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)';
-                const col = p.owned ? 'var(--status-green)' : 'var(--text-dim)';
-                return `
-                <button onclick="toggleFarmPart(${t.id},${idx})" 
-                        style="background: ${bg}; border: 1px solid ${border}; color:${col}; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                  ${p.owned ? '✓ ' : ''}${p.name}
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+              ${!t.is_completed ? `
+                <button onclick="completeFarmTarget(${t.id})" 
+                        style="background: ${percent === 100 ? 'var(--gold-primary)' : 'transparent'}; 
+                               color: ${percent === 100 ? '#111' : 'var(--text-dim)'}; 
+                               border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)'}; 
+                               padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">
+                  ${percent === 100 ? '⭐ Fertig (In Vault)' : 'Archivieren'}
                 </button>
-                `;
-              }).join('')}
+              ` : `
+                <button onclick="uncompleteFarmTarget(${t.id})" style="background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                  Zurück zu Aktiv
+                </button>
+              `}
+              <button onclick="deleteFarmTarget(${t.id})" style="background: transparent; color: var(--status-red); border: none; font-size: 1rem; cursor: pointer;" title="Löschen">🗑️</button>
             </div>
           </div>
-
-          <!-- Aktionen -->
-          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-            ${!t.is_completed ? `
-              <button onclick="completeFarmTarget(${t.id})" 
-                      style="background: ${percent === 100 ? 'var(--gold-primary)' : 'transparent'}; 
-                             color: ${percent === 100 ? '#111' : 'var(--text-dim)'}; 
-                             border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)'}; 
-                             padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">
-                ${percent === 100 ? '⭐ Fertig (In Vault)' : 'Archivieren'}
-              </button>
-            ` : `
-              <button onclick="uncompleteFarmTarget(${t.id})" style="background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                Zurück zu Aktiv
-              </button>
-            `}
-            <button onclick="deleteFarmTarget(${t.id})" style="background: transparent; color: var(--status-red); border: none; font-size: 1rem; cursor: pointer;" title="Löschen">🗑️</button>
-          </div>
-        </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
+      } catch (e) {
+        console.error("Fehler bei Farm-Zielen:", e);
+      }
     }
 
     async function toggleFarmPart(targetId, partIndex) {
@@ -1205,77 +1218,14 @@
     }
 
     // ==========================================
-    // 5. 🧪 DOJO FORSCHUNGS-TRACKER
-    // ==========================================
-    async function ladeDojoForschungen() {
-      const container = document.getElementById("dojo-research-list");
-      const badge = document.getElementById("research-count-badge");
-      if (!container) return;
-
-      try {
-        const { data: researches, error } = await supabaseClient
-          .from("dojo_research")
-          .select("*");
-
-        if (error) {
-          console.warn("Dojo Research DB Fehler:", error);
-          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--status-red); grid-column: 1/-1;">Supabase Fehler: ${error.message}</div>`;
-          if (badge) badge.innerText = "Fehler";
-          return;
-        }
-
-        if (!researches || researches.length === 0) {
-          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--text-dim); grid-column: 1/-1;">Tabelle 'dojo_research' ist noch leer. Füge Forschungen in Supabase ein!</div>`;
-          if (badge) badge.innerText = "0 Forschungen";
-          return;
-        }
-
-        const completed = researches.filter(r => r.is_completed).length;
-        if (badge) badge.innerText = `${completed} / ${researches.length} Erforscht`;
-
-        container.innerHTML = researches.map(r => {
-          const name = r.item_name || r.name || "Unbekannt";
-          const lab = r.lab || r.category || "Labor";
-          const isDone = !!r.is_completed;
-
-          return `
-            <div style="background: rgba(0,0,0,0.4); border: 1px solid ${isDone ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-size: 0.85rem; font-weight: bold; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
-                  ${name}
-                </div>
-                <div style="font-size: 0.7rem; color: var(--cyan-primary);">${lab}</div>
-              </div>
-              <button onclick="toggleResearchStatus(${r.id}, ${isDone})" class="btn-counter" style="font-size: 0.75rem; border-color: ${isDone ? 'var(--status-green)' : 'rgba(255,255,255,0.2)'};">
-                ${isDone ? '✓ Fertig' : 'Erforschen'}
-              </button>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        console.error("Unerwarteter Fehler bei dojo_research:", err);
-      }
-    }
-
-    async function toggleResearchStatus(id, currentStatus) {
-      await supabaseClient
-        .from("dojo_research")
-        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
-        .eq("id", id);
-      ladeDojoForschungen();
-      ladeDashboardDaten();
-    }
-
-    // ==========================================
     // INITIALISIERUNG
     // ==========================================
     async function initDashboard() {
-      await ladeDashboardDaten();
-      await ladeDuoMondfleisch();
-      await ladeWeeklyChecklist();
-      await ladeSyndikatsMatrix();
-      await ladeFarmTargets();
-      await ladeDojoForschungen(); // <-- Hier hinzufügen!
+      try { await ladeDashboardDaten(); } catch (e) { console.error("Init Error 1:", e); }
+      try { await ladeWeeklyChecklist(); } catch (e) { console.error("Init Error 2:", e); }
+      try { await ladeSyndikatsMatrix(); } catch (e) { console.error("Init Error 3:", e); }
+      try { await ladeFarmTargets(); } catch (e) { console.error("Init Error 4:", e); }
+      try { await ladeDojoForschungen(); } catch (e) { console.error("Init Error 5:", e); }
       ladeWorldstateDaten();
     }
 
