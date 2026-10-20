@@ -753,56 +753,61 @@
     }
 
     // ==========================================
-    // 2. 🏛️ SYNDIKATS-MATRIX (DUO-VERGLEICH & TRADE-CHECK)
+    // 2. 🏛️ SYNDIKATS-MATRIX (DUO-VERGLEICH) - STABIL & ROBUST
     // ==========================================
     async function ladeSyndikatsMatrix() {
-      const { data: allRanks } = await supabaseClient.from('syndicate_ranks').select('*');
-      const ranksMap = {};
-      (allRanks || []).forEach(r => {
-        ranksMap[`${r.player_name}_${r.syndicate_id}`] = r.rank;
-      });
+      try {
+        const { data: allRanks } = await supabaseClient.from('syndicate_ranks').select('*');
+        const ranksMap = {};
+        (allRanks || []).forEach(r => {
+          // Groß-/Kleinschreibung ignorieren für maximale Trefferquote
+          ranksMap[`${r.player_name.toLowerCase()}_${r.syndicate_id}`] = r.rank;
+        });
 
-      const player1 = cachedPlayers[0]?.player_name || "Nexes92";
-      const player2 = cachedPlayers[1]?.player_name || "Partner";
+        const p1 = "Nexes92";
+        const p2 = "SonofImperator";
 
-      function renderSyndicateGrid(syndicatesList, containerId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
+        function renderSyndicateGrid(syndicatesList, containerId) {
+          const container = document.getElementById(containerId);
+          if (!container) return;
 
-        container.innerHTML = syndicatesList.map(s => {
-          const r1 = ranksMap[`${player1}_${s.id}`] || 0;
-          const r2 = ranksMap[`${player2}_${s.id}`] || 0;
-          const isMaxedAny = r1 === 5 || r2 === 5;
+          container.innerHTML = syndicatesList.map(s => {
+            const r1 = ranksMap[`${p1.toLowerCase()}_${s.id}`] || 0;
+            const r2 = ranksMap[`${p2.toLowerCase()}_${s.id}`] || 0;
+            const isMaxedAny = (r1 === 5 || r2 === 5);
 
-          return `
-            <div class="syndicate-card ${isMaxedAny ? 'gemaxt' : ''}">
-              <div>
-                <div style="font-weight: bold; font-size: 0.95rem; color: #fff;">${s.name}</div>
-                <div style="font-size: 0.75rem; color: ${isMaxedAny ? 'var(--gold-primary)' : 'var(--text-dim)'}; margin-top: 2px;">
-                  ${isMaxedAny ? '★ Rang 5 erreicht (Tauschbereit!)' : 'Rang-Auswahl'}
+            return `
+              <div class="syndicate-card ${isMaxedAny ? 'gemaxt' : ''}">
+                <div>
+                  <div style="font-weight: bold; font-size: 0.95rem; color: #fff;">${s.name}</div>
+                  <div style="font-size: 0.75rem; color: ${isMaxedAny ? 'var(--gold-primary)' : 'var(--text-dim)'}; margin-top: 2px;">
+                    ${isMaxedAny ? '★ Rang 5 erreicht (Tauschbereit!)' : 'Rang-Auswahl'}
+                  </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <div style="text-align: center;">
+                    <span style="font-size: 0.7rem; color: var(--cyan-primary); display: block;">${p1}</span>
+                    <select onchange="updateSyndicateRank('${p1}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
+                      ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r1 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
+                    </select>
+                  </div>
+                  <div style="text-align: center;">
+                    <span style="font-size: 0.7rem; color: var(--gold-primary); display: block;">${p2}</span>
+                    <select onchange="updateSyndicateRank('${p2}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
+                      ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r2 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
+                    </select>
+                  </div>
                 </div>
               </div>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                <div style="text-align: center;">
-                  <span style="font-size: 0.7rem; color: var(--cyan-primary); display: block;">${player1}</span>
-                  <select onchange="updateSyndicateRank('${player1}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
-                    ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r1 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
-                  </select>
-                </div>
-                <div style="text-align: center;">
-                  <span style="font-size: 0.7rem; color: var(--gold-primary); display: block;">${player2}</span>
-                  <select onchange="updateSyndicateRank('${player2}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
-                    ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r2 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
-                  </select>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
+            `;
+          }).join('');
+        }
+
+        renderSyndicateGrid(CORE_SYNDICATES, 'core-syndicates-grid');
+        renderSyndicateGrid(ENDGAME_SYNDICATES, 'endgame-syndicates-grid');
+      } catch (e) {
+        console.error("Fehler in ladeSyndikatsMatrix:", e);
       }
-
-      renderSyndicateGrid(CORE_SYNDICATES, 'core-syndicates-grid');
-      renderSyndicateGrid(ENDGAME_SYNDICATES, 'endgame-syndicates-grid');
     }
 
     async function updateSyndicateRank(playerName, syndicateId, rankValue) {
@@ -1197,6 +1202,68 @@
 
       input.value = '';
       ladeFarmTargets();
+    }
+
+    // ==========================================
+    // 5. 🧪 DOJO FORSCHUNGS-TRACKER
+    // ==========================================
+    async function ladeDojoForschungen() {
+      const container = document.getElementById("dojo-research-list");
+      const badge = document.getElementById("research-count-badge");
+      if (!container) return;
+
+      try {
+        const { data: researches, error } = await supabaseClient
+          .from("dojo_research")
+          .select("*");
+
+        if (error) {
+          console.warn("Dojo Research DB Fehler:", error);
+          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--status-red); grid-column: 1/-1;">Supabase Fehler: ${error.message}</div>`;
+          if (badge) badge.innerText = "Fehler";
+          return;
+        }
+
+        if (!researches || researches.length === 0) {
+          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--text-dim); grid-column: 1/-1;">Tabelle 'dojo_research' ist noch leer. Füge Forschungen in Supabase ein!</div>`;
+          if (badge) badge.innerText = "0 Forschungen";
+          return;
+        }
+
+        const completed = researches.filter(r => r.is_completed).length;
+        if (badge) badge.innerText = `${completed} / ${researches.length} Erforscht`;
+
+        container.innerHTML = researches.map(r => {
+          const name = r.item_name || r.name || "Unbekannt";
+          const lab = r.lab || r.category || "Labor";
+          const isDone = !!r.is_completed;
+
+          return `
+            <div style="background: rgba(0,0,0,0.4); border: 1px solid ${isDone ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: bold; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                  ${name}
+                </div>
+                <div style="font-size: 0.7rem; color: var(--cyan-primary);">${lab}</div>
+              </div>
+              <button onclick="toggleResearchStatus(${r.id}, ${isDone})" class="btn-counter" style="font-size: 0.75rem; border-color: ${isDone ? 'var(--status-green)' : 'rgba(255,255,255,0.2)'};">
+                ${isDone ? '✓ Fertig' : 'Erforschen'}
+              </button>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Unerwarteter Fehler bei dojo_research:", err);
+      }
+    }
+
+    async function toggleResearchStatus(id, currentStatus) {
+      await supabaseClient
+        .from("dojo_research")
+        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      ladeDojoForschungen();
+      ladeDashboardDaten();
     }
 
     // ==========================================
