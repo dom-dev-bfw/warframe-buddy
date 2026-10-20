@@ -39,7 +39,7 @@
       margin: 0 auto;
     }
 
-    /* 1. GHIBLI HERO BANNER */
+    /* 1. HERO BANNER */
     .header-banner {
       position: relative;
       border-radius: 14px 14px 4px 4px;
@@ -85,7 +85,7 @@
       text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
     }
 
-    /* 2. SENPAI FEATURE PANEL */
+    /* 2. SENPAI HERO */
     .senpai-hero-card {
       display: grid;
       grid-template-columns: 340px 1fr;
@@ -250,7 +250,7 @@
     .val { font-weight: 600; color: #fff; }
     .highlight { color: var(--gold-primary); text-shadow: 0 0 8px var(--gold-glow); }
 
-    /* XP PROGRESS BAR */
+    /* PROGRESS BARS */
     .progress-container {
       background: rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -272,7 +272,7 @@
       box-shadow: 0 0 14px var(--gold-primary);
     }
 
-    /* BUTTONS & CONTROLS */
+    /* BUTTONS & INPUTS */
     .btn-counter {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -306,7 +306,7 @@
       box-shadow: 0 0 8px var(--cyan-glow);
     }
 
-    /* SYNDIKATS-MATRIX CARDS */
+    /* SYNDIKAT CARDS */
     .syndicate-card {
       background: rgba(0, 0, 0, 0.35);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -324,7 +324,7 @@
 <body>
 
   <div class="container">
-    <!-- 1. GHIBLI HERO BANNER -->
+    <!-- 1. HERO BANNER -->
     <div class="header-banner">
       <div class="header-content">
         <h1>⚔️ Warframe Live Hub</h1>
@@ -332,7 +332,7 @@
       </div>
     </div>
 
-    <!-- 2. SENPAI GHIBLI FEATURE PANEL -->
+    <!-- 2. SENPAI HERO -->
     <div class="senpai-hero-card">
       <div class="senpai-img-wrap">
         <img src="senpai.jpg" alt="Notice me Senpai" class="senpai-large-img">
@@ -349,16 +349,15 @@
     <!-- 3. SPIELER-STATUS -->
     <div id="players-grid" class="grid"></div>
 
-    <!-- 4. ⚡ WOCHEN-RESET & EVENT-HUB -->
+    <!-- 4. ⚡ WOCHEN-RESET & EVENT-KOMMANDO -->
     <div class="card" style="border-left-color: var(--cyan-primary);">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h2 style="margin: 0; font-size: 1.1rem; color: var(--cyan-primary);">⚡ Wochen-Reset & Event-Kommando</h2>
         <span class="badge online" id="reset-daily-timer">Reset in --:--:--</span>
       </div>
 
-      <!-- Obere Info-Leiste: Dynamische Daily Caps & Event -->
+      <!-- Obere Info-Leiste: Dynamische Daily Caps & Duviri -->
       <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 15px;">
-        <!-- Dynamische Tages-Limits für beide Spieler -->
         <div id="standing-caps-container" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
           <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Tägliches Ansehen-Cap</div>
           <div id="standing-caps-list" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
@@ -366,27 +365,31 @@
           </div>
         </div>
 
-        <!-- Event Der Weg nach Tau -->
-        <div id="event-tau-card" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(0,229,255,0.3);">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.75rem; color: var(--cyan-primary); text-transform: uppercase; font-weight: bold;">🌌 Der Weg nach Tau</span>
-            <span class="badge status-tausch" id="tau-badge">Bereit</span>
-          </div>
-          <div id="tau-desc" style="font-size: 0.85rem; color: #fff; margin-top: 6px;">Startet am 15. Oktober</div>
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px;">🌀 Duviri Circuit (Aktuelle Woche)</div>
+          <div id="duviri-rotation-text" style="font-size: 0.85rem; color: #fff;">Lade Duviri-Rotation aus Warframe API...</div>
         </div>
       </div>
 
-      <!-- Duviri Circuit Live Rotation -->
-      <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); margin-bottom: 15px;">
-        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px;">🌀 Duviri Circuit (Aktuelle Woche)</div>
-        <div id="duviri-rotation-text" style="font-size: 0.9rem; color: #fff;">Lade Duviri-Rotation aus Warframe API...</div>
+      <!-- DUO-MONDFLEISCH EVENT-TRACKER -->
+      <div id="event-tau-card" style="background: rgba(0,0,0,0.45); padding: 14px; border-radius: 8px; border: 1px solid rgba(0,229,255,0.3); margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div>
+            <span style="font-size: 0.85rem; color: var(--cyan-primary); text-transform: uppercase; font-weight: bold;">🌌 Der Weg nach Tau &bull; Event-Shop</span>
+            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">Währung: Mondfleisch (Alarme & Drops)</div>
+          </div>
+          <span class="badge status-ready" id="tau-badge">AKTIV 🔥</span>
+        </div>
+
+        <div id="moonflesh-duo-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+          <!-- Wird per JS dynamisch befüllt -->
+        </div>
       </div>
 
-      <!-- Duo Wochen-Checkliste (Automatischer Montags-Reset) -->
+      <!-- Duo Wochen-Checkliste -->
       <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
           <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600;">Wöchentliche Pflichtaufgaben (Auto-Reset Mo 00:00 UTC):</span>
-          <!-- Riven-Scherben Klick-Zähler -->
           <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
             <span style="color: var(--text-dim);">Riven-Scherben:</span>
             <button class="btn-counter" onclick="aendereRivenScherben(-1)">-</button>
@@ -394,52 +397,53 @@
             <button class="btn-counter" onclick="aendereRivenScherben(1)">+</button>
           </div>
         </div>
-
         <div id="weekly-checklist-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;"></div>
       </div>
     </div>
 
-    <!-- 5. CLAN-DOJO & FORSCHUNGS-TRACKER -->
+    <!-- 5. CLAN-DOJO & FORSCHUNGS-HANGAR -->
     <div class="card" style="border-left-color: var(--gold-primary);">
-      <h2>
-        <span>🏰 Clan-Dojo & Forschungen</span>
-        <span class="badge" style="background: rgba(229, 185, 92, 0.15); color: var(--gold-primary); border: 1px solid var(--gold-primary);">DOJO DB</span>
-      </h2>
-      <div class="info-row">
-        <span class="label">Clan:</span>
-        <span class="val highlight" id="clan-name">THELOSTPRIMARCHS</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.1rem; color: var(--gold-primary);">🏰 Clan-Dojo: Forschungshub</h2>
+        <div style="display: flex; gap: 8px;">
+          <button id="btn-research-active" onclick="switchResearchTab('active')" style="background: var(--gold-primary); color: #111; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">Offen / In Arbeit</button>
+          <button id="btn-research-completed" onclick="switchResearchTab('completed')" style="background: #222; color: #aaa; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Erforscht</button>
+        </div>
       </div>
-      <div class="info-row">
-        <span class="label">Clan-Rang:</span>
-        <span class="val" id="clan-rank">-</span>
+
+      <!-- Dojo Kopfdaten -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 14px;">
+        <div><span class="label">Clan:</span> <span class="val highlight" id="clan-name">THELOSTPRIMARCHS</span></div>
+        <div><span class="label">Rang:</span> <span class="val" id="clan-rank">-</span></div>
+        <div><span class="label">Status:</span> <span class="val" id="clan-levelup">-</span></div>
       </div>
-      <div class="info-row" style="flex-direction: column; align-items: stretch; gap: 4px;">
-        <div style="display: flex; justify-content: space-between;">
+      <div style="margin-bottom: 15px;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
           <span class="label">Rang-Fortschritt:</span>
           <span class="val" id="xp-text">-</span>
         </div>
-        <div class="progress-container">
-          <div id="xp-bar" class="progress-bar"></div>
-        </div>
-      </div>
-      <div class="info-row">
-        <span class="label">Status:</span>
-        <span class="val" id="clan-levelup">-</span>
+        <div class="progress-container"><div id="xp-bar" class="progress-bar"></div></div>
       </div>
 
-      <!-- Live Dojo-Forschungsliste aus Supabase (dojo_research) -->
-      <div style="margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <span style="font-size: 0.85rem; color: var(--gold-primary); font-weight: bold; text-transform: uppercase;">🧪 Aktive & Offene Forschungen</span>
-          <span id="research-count-badge" style="font-size: 0.75rem; color: var(--text-dim);">Lade Forschungen...</span>
-        </div>
-        <div id="dojo-research-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px;">
-          <!-- Wird per JS dynamisch befüllt -->
-        </div>
+      <!-- Such- & Filterleiste für Forschungen -->
+      <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+        <input type="text" id="research-search-input" oninput="filtriereDojoForschungen()" placeholder="Forschung suchen (z. B. Ignis, Wukong)..." style="flex: 1; min-width: 180px;">
+        <select id="research-lab-filter" onchange="filtriereDojoForschungen()" style="background: #1a1a24;">
+          <option value="all">Alle Labore</option>
+          <option value="Tenno">Tenno-Labor</option>
+          <option value="Chem">Chem-Labor</option>
+          <option value="Bio">Bio-Labor</option>
+          <option value="Energie">Energie-Labor</option>
+          <option value="Orokin">Orokin-Labor</option>
+        </select>
+        <span id="research-count-badge" class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-dim); align-self: center;">0 Forschungen</span>
       </div>
+
+      <!-- Forschungs-Karten Grid -->
+      <div id="dojo-research-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 4px;"></div>
     </div>
 
-    <!-- 6. KAMPAGNE & HAUPTQUESTS (Fokus Deimos & Mutter-Marken) -->
+    <!-- 6. KAMPAGNE & HAUPTQUESTS (Deimos Fokus) -->
     <div class="card">
       <h2>🗺️ Hauptgeschichte & Deimos Fokus</h2>
       <div id="campaign-grid" class="grid" style="margin-top: 12px; margin-bottom: 0;"></div>
@@ -452,11 +456,9 @@
         <span style="font-size: 0.75rem; color: var(--text-dim);">Ränge 0 bis 5 &bull; Trade-Check</span>
       </div>
 
-      <!-- Kern-Syndikate -->
       <div style="font-size: 0.8rem; color: var(--gold-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">6 Haupt-Syndikate (Relais & Handel)</div>
       <div id="core-syndicates-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 20px;"></div>
 
-      <!-- Open-Worlds & Endgame Fraktionen -->
       <div style="font-size: 0.8rem; color: var(--cyan-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">Open-World & Endgame Fraktionen</div>
       <div id="endgame-syndicates-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
     </div>
@@ -471,7 +473,6 @@
         </div>
       </div>
 
-      <!-- Such- & Hinzufügen-Leiste mit Autocomplete -->
       <div id="farm-add-bar" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
         <input list="wf-all-items-datalist" type="text" id="farm-search-input" placeholder="z. B. Dagath, Gauss Prime, Torid..." style="flex: 1; min-width: 200px;">
         <datalist id="wf-all-items-datalist"></datalist>
@@ -480,7 +481,6 @@
         <button onclick="addFarmTargetFromInput()" style="background: var(--cyan-primary); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">+ Hinzufügen</button>
       </div>
 
-      <!-- Container für die Farm-Karten -->
       <div id="farm-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
         <div style="color: var(--text-dim); font-size: 0.9rem;">Lade Farm-Ziele...</div>
       </div>
@@ -775,69 +775,111 @@
     }
 
     // ==========================================
-    // 3. 🧪 DOJO FORSCHUNGS-TRACKER (dojo_research)
+    // 3. 🥩 DUO-MONDFLEISCH TRACKER (FÜR BEIDE SPIELER)
     // ==========================================
-    async function ladeDojoForschungen() {
-      const container = document.getElementById("dojo-research-list");
-      const badge = document.getElementById("research-count-badge");
+    const MOONFLESH_TARGETS = {
+      1625: "Must-Haves (Scherben & Kern) [1.625]",
+      2575: "Alle neuen Event-Items [2.575]",
+      5000: "Alles Einmalige inkl. Waffen [5.000]",
+      11000: "Komplett-Sweep (inkl. Arcanas) [11.000]"
+    };
+
+    let moonfleshData = {};
+    let moonfleshTargets = {};
+
+    async function ladeDuoMondfleisch() {
+      const container = document.getElementById("moonflesh-duo-container");
       if (!container) return;
 
-      try {
-        const { data: researches, error } = await supabaseClient
-          .from("dojo_research")
-          .select("*");
+      const playerNames = ["Nexes92", "SonofImperator"];
 
-        if (error) {
-          console.warn("Dojo Research DB Fehler:", error);
-          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--status-red); grid-column: 1/-1;">Supabase: ${error.message}</div>`;
-          if (badge) badge.innerText = "Fehler";
-          return;
-        }
+      const { data } = await supabaseClient
+        .from("weekly_checklist")
+        .select("player_name, riven_count")
+        .eq("task_id", "moonflesh_total");
 
-        if (!researches || researches.length === 0) {
-          container.innerHTML = `<div style="font-size: 0.8rem; color: var(--text-dim); grid-column: 1/-1;">Tabelle 'dojo_research' ist leer.</div>`;
-          if (badge) badge.innerText = "0 Forschungen";
-          return;
-        }
+      (data || []).forEach(d => {
+        const match = playerNames.find(p => p.toLowerCase() === d.player_name.toLowerCase()) || d.player_name;
+        moonfleshData[match] = d.riven_count || 0;
+      });
 
-        const completed = researches.filter(r => r.is_completed).length;
-        if (badge) badge.innerText = `${completed} / ${researches.length} Erforscht`;
+      playerNames.forEach(p => {
+        if (moonfleshData[p] === undefined) moonfleshData[p] = 0;
+        if (!moonfleshTargets[p]) moonfleshTargets[p] = 2575;
+      });
 
-        container.innerHTML = researches.map(r => {
-          const name = r.item_name || r.name || "Unbekannt";
-          const lab = r.lab || r.category || "Labor";
-          const isDone = !!r.is_completed;
-
-          return `
-            <div style="background: rgba(0,0,0,0.4); border: 1px solid ${isDone ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div style="font-size: 0.85rem; font-weight: bold; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
-                  ${name}
-                </div>
-                <div style="font-size: 0.7rem; color: var(--cyan-primary);">${lab}</div>
-              </div>
-              <button onclick="toggleResearchStatus(${r.id}, ${isDone})" class="btn-counter" style="font-size: 0.75rem; border-color: ${isDone ? 'var(--status-green)' : 'rgba(255,255,255,0.2)'};">
-                ${isDone ? '✓ Fertig' : 'Erforschen'}
-              </button>
-            </div>
-          `;
-        }).join('');
-      } catch (err) {
-        console.error("Unerwarteter Fehler bei dojo_research:", err);
-      }
+      renderDuoMondfleischUI(playerNames);
     }
 
-    async function toggleResearchStatus(id, currentStatus) {
-      await supabaseClient
-        .from("dojo_research")
-        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
-        .eq("id", id);
-      ladeDojoForschungen();
-      ladeDashboardDaten();
+    function renderDuoMondfleischUI(playerNames) {
+      const container = document.getElementById("moonflesh-duo-container");
+      if (!container) return;
+
+      container.innerHTML = playerNames.map(player => {
+        const count = moonfleshData[player] || 0;
+        const target = moonfleshTargets[player] || 2575;
+        const percent = Math.min(100, Math.round((count / target) * 100));
+
+        let optionsHtml = '';
+        Object.entries(MOONFLESH_TARGETS).forEach(([val, label]) => {
+          optionsHtml += `<option value="${val}" ${parseInt(val) === target ? 'selected' : ''}>${label}</option>`;
+        });
+
+        return `
+          <div style="background: rgba(0,0,0,0.5); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: bold; color: var(--cyan-primary); font-size: 0.95rem;">👤 ${player}</span>
+              <span style="color: var(--gold-primary); font-size: 0.85rem; font-weight: bold;">
+                ${count.toLocaleString()} / ${target.toLocaleString()} (${percent}%)
+              </span>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-bottom: 10px;">
+              <span style="font-size: 0.8rem; color: var(--text-dim);">Fleisch:</span>
+              <div style="display: flex; gap: 4px;">
+                <button class="btn-counter" onclick="aendereDuoMondfleisch('${player}', -10)">-10</button>
+                <button class="btn-counter" onclick="aendereDuoMondfleisch('${player}', 10)">+10</button>
+                <button class="btn-counter" onclick="aendereDuoMondfleisch('${player}', 50)" title="Normaler Alarm">+50</button>
+                <button class="btn-counter" onclick="aendereDuoMondfleisch('${player}', 75)" title="Steel Path Alarm" style="border-color: var(--gold-primary);">+75</button>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 8px;">
+              <select onchange="updateDuoMoonfleshTarget('${player}', this.value)" style="width: 100%; padding: 4px 6px; font-size: 0.75rem; background: #111;">
+                ${optionsHtml}
+              </select>
+            </div>
+
+            <div class="progress-container" style="height: 7px; margin-top: 0;">
+              <div class="progress-bar ${percent === 100 ? 'progress-ready' : ''}" style="width: ${percent}%;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function aendereDuoMondfleisch(playerName, delta) {
+      const current = moonfleshData[playerName] || 0;
+      const neuerWert = Math.max(0, current + delta);
+      moonfleshData[playerName] = neuerWert;
+
+      renderDuoMondfleischUI(["Nexes92", "SonofImperator"]);
+
+      await supabaseClient.from("weekly_checklist").upsert({
+        player_name: playerName,
+        task_id: "moonflesh_total",
+        riven_count: neuerWert,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'player_name,task_id' });
+    }
+
+    function updateDuoMoonfleshTarget(playerName, val) {
+      moonfleshTargets[playerName] = parseInt(val, 10);
+      renderDuoMondfleischUI(["Nexes92", "SonofImperator"]);
     }
 
     // ==========================================
-    // 4. ⚡ RESET-HUB MIT MONTAGS-RESET
+    // 4. ⚡ RESET-HUB MIT AUTOMATISCHEM RESET
     // ==========================================
     const TASKS = [
       { id: "riven_palladino", name: "Palladino (10 Scherben)" },
@@ -967,28 +1009,116 @@
             }
           }
         }
-
-        const resEvents = await fetch("https://api.warframestat.us/pc/events");
-        if (resEvents.ok) {
-          const events = await resEvents.json();
-          const tauEvent = events.find(e => e.description && e.description.toLowerCase().includes("tau"));
-          if (tauEvent) {
-            const descEl = document.getElementById("tau-desc");
-            const badgeEl = document.getElementById("tau-badge");
-            if (descEl) descEl.innerText = `${tauEvent.description} (Endet: ${new Date(tauEvent.expiry).toLocaleDateString()})`;
-            if (badgeEl) {
-              badgeEl.className = "badge status-ready";
-              badgeEl.innerText = "AKTIV 🔥";
-            }
-          }
-        }
       } catch (err) {
         console.warn("Worldstate API Fehler:", err);
       }
     }
 
     // ==========================================
-    // 5. 🎯 VISUELLER FARM-TRACKER (HANGAR)
+    // 5. 🧪 DOJO FORSCHUNGS-HANGAR (dojo_research)
+    // ==========================================
+    let currentResearchTab = 'active';
+    let cachedResearches = [];
+
+    function switchResearchTab(tab) {
+      currentResearchTab = tab;
+      document.getElementById('btn-research-active').style.background = tab === 'active' ? 'var(--gold-primary)' : '#222';
+      document.getElementById('btn-research-active').style.color = tab === 'active' ? '#111' : '#aaa';
+      document.getElementById('btn-research-completed').style.background = tab === 'completed' ? 'var(--gold-primary)' : '#222';
+      document.getElementById('btn-research-completed').style.color = tab === 'completed' ? '#111' : '#aaa';
+      filtriereDojoForschungen();
+    }
+
+    async function ladeDojoForschungen() {
+      try {
+        const { data: researches, error } = await supabaseClient
+          .from("dojo_research")
+          .select("*")
+          .order("item_name", { ascending: true });
+
+        if (error) {
+          console.warn("Dojo Research DB Fehler:", error);
+          const container = document.getElementById("dojo-research-list");
+          if (container) container.innerHTML = `<div style="font-size:0.8rem; color:var(--status-red); grid-column:1/-1;">Supabase: ${error.message}</div>`;
+          return;
+        }
+
+        cachedResearches = researches || [];
+        filtriereDojoForschungen();
+      } catch (err) {
+        console.error("Fehler bei dojo_research:", err);
+      }
+    }
+
+    function filtriereDojoForschungen() {
+      const container = document.getElementById("dojo-research-list");
+      const badge = document.getElementById("research-count-badge");
+      if (!container) return;
+
+      const isCompletedTab = currentResearchTab === 'completed';
+      const searchStr = (document.getElementById("research-search-input")?.value || "").toLowerCase().trim();
+      const labFilter = document.getElementById("research-lab-filter")?.value || "all";
+
+      const filtered = cachedResearches.filter(r => {
+        const isDone = !!r.is_completed;
+        if (isDone !== isCompletedTab) return false;
+
+        const name = (r.item_name || r.name || "").toLowerCase();
+        const lab = (r.lab || r.category || "").toLowerCase();
+
+        if (searchStr && !name.includes(searchStr)) return false;
+        if (labFilter !== 'all' && !lab.includes(labFilter.toLowerCase())) return false;
+
+        return true;
+      });
+
+      const totalCompleted = cachedResearches.filter(r => r.is_completed).length;
+      if (badge) badge.innerText = `${totalCompleted} / ${cachedResearches.length} Erforscht`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 30px;">
+          ${isCompletedTab ? 'Noch keine archivierten Forschungen.' : 'Keine offenen Forschungen für diesen Filter gefunden.'}
+        </div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(r => {
+        const name = r.item_name || r.name || "Forschung";
+        const lab = r.lab || r.category || "Labor";
+        const isDone = !!r.is_completed;
+
+        return `
+          <div style="background: rgba(0,0,0,0.4); border: 1px solid ${isDone ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="font-weight: bold; font-size: 0.95rem; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
+                ${name}
+              </div>
+              <div style="font-size: 0.75rem; color: var(--cyan-primary); margin-top: 4px;">🔬 ${lab}</div>
+            </div>
+            <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
+              <button onclick="toggleResearchStatus(${r.id}, ${isDone})" class="btn-counter" style="font-size: 0.75rem; border-color: ${isDone ? 'var(--gold-primary)' : 'var(--status-green)'};">
+                ${isDone ? '↩️ Zurück zu Offen' : '✓ Erforscht'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function toggleResearchStatus(id, currentStatus) {
+      await supabaseClient
+        .from("dojo_research")
+        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
+        .eq("id", id);
+      
+      const item = cachedResearches.find(r => r.id === id);
+      if (item) item.is_completed = !currentStatus;
+      filtriereDojoForschungen();
+      ladeDashboardDaten();
+    }
+
+    // ==========================================
+    // 6. 🎯 VISUELLER DUO-FARM-TRACKER (HANGAR)
     // ==========================================
     const WF_SUGGESTIONS = [
       "Dagath", "Gauss Prime", "Gauss", "Grendel Prime", "Wisp Prime", "Khora Prime", 
@@ -1222,10 +1352,11 @@
     // ==========================================
     async function initDashboard() {
       try { await ladeDashboardDaten(); } catch (e) { console.error("Init Error 1:", e); }
-      try { await ladeWeeklyChecklist(); } catch (e) { console.error("Init Error 2:", e); }
-      try { await ladeSyndikatsMatrix(); } catch (e) { console.error("Init Error 3:", e); }
-      try { await ladeFarmTargets(); } catch (e) { console.error("Init Error 4:", e); }
-      try { await ladeDojoForschungen(); } catch (e) { console.error("Init Error 5:", e); }
+      try { await ladeDuoMondfleisch(); } catch (e) { console.error("Init Error 2:", e); }
+      try { await ladeWeeklyChecklist(); } catch (e) { console.error("Init Error 3:", e); }
+      try { await ladeSyndikatsMatrix(); } catch (e) { console.error("Init Error 4:", e); }
+      try { await ladeFarmTargets(); } catch (e) { console.error("Init Error 5:", e); }
+      try { await ladeDojoForschungen(); } catch (e) { console.error("Init Error 6:", e); }
       ladeWorldstateDaten();
     }
 
