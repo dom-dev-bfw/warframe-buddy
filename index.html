@@ -9,7 +9,7 @@
   <style>
     :root {
       --bg-void: #05070c;
-      --panel-bg: rgba(13, 18, 30, 0.82);
+      --panel-bg: rgba(13, 18, 30, 0.85);
       --panel-border: rgba(0, 229, 255, 0.22);
       --gold-primary: #e5b95c;
       --gold-glow: rgba(229, 185, 92, 0.45);
@@ -35,11 +35,11 @@
     }
 
     .container {
-      max-width: 960px;
+      max-width: 980px;
       margin: 0 auto;
     }
 
-    /* 1. HERO BANNER */
+    /* HEADER BANNER */
     .header-banner {
       position: relative;
       border-radius: 14px 14px 4px 4px;
@@ -48,7 +48,7 @@
       border: 1px solid var(--panel-border);
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.15);
       background: url('banner.jpg') center/cover no-repeat;
-      min-height: 230px;
+      min-height: 200px;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -85,7 +85,7 @@
       text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
     }
 
-    /* 2. SENPAI FEATURE PANEL (Ränder entfernt, Sprechblase vollständig) */
+    /* SENPAI PANEL (BÜNDIG, OHNE SCHWARZE BALKEN) */
     .senpai-hero-card {
       display: flex;
       gap: 24px;
@@ -126,9 +126,7 @@
       display: block;
       transition: transform 0.4s ease;
     }
-    .senpai-hero-card:hover .senpai-large-img { 
-      transform: scale(1.02); 
-    }
+    .senpai-hero-card:hover .senpai-large-img { transform: scale(1.02); }
     .senpai-body {
       flex: 1;
       display: flex;
@@ -137,39 +135,30 @@
     }
     .senpai-title {
       margin: 0 0 10px 0;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       color: var(--gold-primary);
       text-shadow: 0 0 12px var(--gold-glow);
       letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
     }
     .senpai-quote {
       font-style: italic;
       color: #fff;
       font-size: 1.05rem;
-      margin: 0 0 10px 0;
-      letter-spacing: 0.5px;
+      margin: 0 0 8px 0;
     }
     .senpai-desc {
       margin: 0;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       color: var(--text-dim);
       line-height: 1.5;
     }
 
     @media (max-width: 768px) {
-      .senpai-hero-card { 
-        flex-direction: column; 
-      }
-      .senpai-img-wrap { 
-        max-width: 100%; 
-      }
+      .senpai-hero-card { flex-direction: column; }
+      .senpai-img-wrap { max-width: 100%; }
     }
 
-
-    /* 3. HUD KARTEN & GRID */
+    /* GRID & CARDS */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -209,7 +198,6 @@
       color: #fff;
     }
 
-    /* BADGES */
     .badge {
       font-size: 0.75rem;
       padding: 4px 10px;
@@ -243,26 +231,24 @@
       border: 1px solid var(--cyan-primary);
     }
 
-    /* ROWS */
     .info-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 0;
+      padding: 8px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-      font-size: 0.92rem;
+      font-size: 0.9rem;
     }
     .info-row:last-child { border-bottom: none; }
     .label { color: var(--text-dim); }
     .val { font-weight: 600; color: #fff; }
     .highlight { color: var(--gold-primary); text-shadow: 0 0 8px var(--gold-glow); }
 
-    /* PROGRESS BARS */
     .progress-container {
       background: rgba(0, 0, 0, 0.5);
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 4px;
-      height: 12px;
+      height: 8px;
       width: 100%;
       overflow: hidden;
       margin-top: 6px;
@@ -271,7 +257,7 @@
       background: linear-gradient(90deg, #1f6feb, var(--cyan-primary));
       height: 100%;
       width: 0%;
-      transition: width 0.4s ease;
+      transition: width 0.3s ease;
       box-shadow: 0 0 10px var(--cyan-primary);
     }
     .progress-ready {
@@ -279,15 +265,14 @@
       box-shadow: 0 0 14px var(--gold-primary);
     }
 
-    /* BUTTONS & INPUTS */
     .btn-counter {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
-      padding: 3px 8px;
+      padding: 4px 8px;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: bold;
       transition: all 0.2s ease;
     }
@@ -312,20 +297,6 @@
       border-color: var(--cyan-primary);
       box-shadow: 0 0 8px var(--cyan-glow);
     }
-
-    /* SYNDIKAT CARDS */
-    .syndicate-card {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: border-color 0.2s;
-    }
-    .syndicate-card:hover { border-color: rgba(0, 229, 255, 0.3); }
-    .syndicate-card.gemaxt { border-color: var(--gold-primary); background: rgba(229, 185, 92, 0.05); }
   </style>
 </head>
 <body>
@@ -335,11 +306,11 @@
     <div class="header-banner">
       <div class="header-content">
         <h1>⚔️ Warframe Live Hub</h1>
-        <div class="subtitle">Operator Sync &bull; Boss-Positionen Verifiziert</div>
+        <div class="subtitle">Operator Sync &bull; Endgame & Steel Path Command</div>
       </div>
     </div>
 
-    <!-- 2. SENPAI HERO -->
+    <!-- 2. SENPAI PANEL -->
     <div class="senpai-hero-card">
       <div class="senpai-img-wrap">
         <img src="senpai.jpg" alt="Notice me Senpai" class="senpai-large-img">
@@ -348,7 +319,7 @@
         <h3 class="senpai-title">✨ The Lost Primarchs Duo</h3>
         <div class="senpai-quote">„Notice me, Senpai!“</div>
         <p class="senpai-desc">
-          Echtzeit-Synchronisation zwischen Mentor und Trainee. Verfolge Kampagnen-Fortschritte, organisiere Relikt-Öffnungen und halte die Prime-Wunschliste auf Kurs.
+          Echtzeit-Synchronisation für den Steel Path. Koordiniert Incarnon-Farms, Relikt-Öffnungen und behaltet eure Prime-Sets und Arkanas im gemeinsamen Hangar im Blick.
         </p>
       </div>
     </div>
@@ -356,140 +327,119 @@
     <!-- 3. SPIELER-STATUS -->
     <div id="players-grid" class="grid"></div>
 
-    <!-- 4. ⚡ WOCHEN-RESET & EVENT-KOMMANDO -->
-    <div class="card" style="border-left-color: var(--cyan-primary);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 1.1rem; color: var(--cyan-primary);">⚡ Wochen-Reset & Event-Kommando</h2>
-        <span class="badge online" id="reset-daily-timer">Reset in --:--:--</span>
-      </div>
-
-      <!-- Obere Info-Leiste: Dynamische Daily Caps & Duviri -->
-      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 15px;">
-        <div id="standing-caps-container" style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
-          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Tägliches Ansehen-Cap</div>
-          <div id="standing-caps-list" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
-            <div style="font-size: 0.85rem; color: #aaa;">Lade Spielerdaten...</div>
-          </div>
-        </div>
-
-        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
-          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 6px;">🌀 Duviri Circuit (Aktuelle Woche)</div>
-          <div id="duviri-rotation-text" style="font-size: 0.85rem; color: #fff;">Lade Duviri-Rotation aus Warframe API...</div>
-        </div>
-      </div>
-
-      <!-- DUO-MONDFLEISCH EVENT-TRACKER -->
-      <div id="event-tau-card" style="background: rgba(0,0,0,0.45); padding: 14px; border-radius: 8px; border: 1px solid rgba(0,229,255,0.3); margin-bottom: 15px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <div>
-            <span style="font-size: 0.85rem; color: var(--cyan-primary); text-transform: uppercase; font-weight: bold;">🌌 Der Weg nach Tau &bull; Event-Shop</span>
-            <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">Währung: Mondfleisch (Alarme & Drops)</div>
-          </div>
-          <span class="badge status-ready" id="tau-badge">AKTIV 🔥</span>
-        </div>
-
-        <div id="moonflesh-duo-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
-          <!-- Wird per JS dynamisch befüllt -->
-        </div>
-      </div>
-
-      <!-- Duo Wochen-Checkliste -->
-      <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-          <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600;">Wöchentliche Pflichtaufgaben (Auto-Reset Mo 00:00 UTC):</span>
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem;">
-            <span style="color: var(--text-dim);">Riven-Scherben:</span>
-            <button class="btn-counter" onclick="aendereRivenScherben(-1)">-</button>
-            <span id="riven-shard-count" class="highlight" style="min-width: 20px; text-align: center;">0</span>
-            <button class="btn-counter" onclick="aendereRivenScherben(1)">+</button>
-          </div>
-        </div>
-        <div id="weekly-checklist-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;"></div>
-      </div>
-    </div>
-
-    <!-- 5. CLAN-DOJO & FORSCHUNGS-HANGAR -->
+    <!-- 4. 🎯 DUO-HANGAR (HAUPTFOKUS: FARM-ZIELE, PRIMES, MODS & ARKANAS) -->
     <div class="card" style="border-left-color: var(--gold-primary);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 1.1rem; color: var(--gold-primary);">🏰 Clan-Dojo: Forschungshub</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="margin: 0; font-size: 1.15rem; color: var(--gold-primary);">🎯 Duo-Hangar: Aktive Farm-Ziele</h2>
         <div style="display: flex; gap: 8px;">
-          <button id="btn-research-active" onclick="switchResearchTab('active')" style="background: var(--gold-primary); color: #111; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">Offen / In Arbeit</button>
-          <button id="btn-research-completed" onclick="switchResearchTab('completed')" style="background: #222; color: #aaa; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Erforscht</button>
+          <button id="btn-tab-active" onclick="switchFarmTab('active')" style="background: var(--gold-primary); color: #111; border: none; padding: 6px 14px; border-radius: 4px; font-weight: bold; cursor: pointer;">Aktiv</button>
+          <button id="btn-tab-completed" onclick="switchFarmTab('completed')" style="background: #222; color: #aaa; border: 1px solid #444; padding: 6px 14px; border-radius: 4px; cursor: pointer;">Sammlung (Vault)</button>
         </div>
       </div>
 
-      <!-- Dojo Kopfdaten -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; margin-bottom: 14px;">
-        <div><span class="label">Clan:</span> <span class="val highlight" id="clan-name">THELOSTPRIMARCHS</span></div>
-        <div><span class="label">Rang:</span> <span class="val" id="clan-rank">-</span></div>
-        <div><span class="label">Status:</span> <span class="val" id="clan-levelup">-</span></div>
-      </div>
-      <div style="margin-bottom: 15px;">
-        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
-          <span class="label">Rang-Fortschritt:</span>
-          <span class="val" id="xp-text">-</span>
-        </div>
-        <div class="progress-container"><div id="xp-bar" class="progress-bar"></div></div>
-      </div>
-
-      <!-- Such- & Filterleiste für Forschungen -->
-      <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-        <input type="text" id="research-search-input" oninput="filtriereDojoForschungen()" placeholder="Forschung suchen (z. B. Ignis, Wukong)..." style="flex: 1; min-width: 180px;">
-        <select id="research-lab-filter" onchange="filtriereDojoForschungen()" style="background: #1a1a24;">
-          <option value="all">Alle Labore</option>
-          <option value="Tenno">Tenno-Labor</option>
-          <option value="Chem">Chem-Labor</option>
-          <option value="Bio">Bio-Labor</option>
-          <option value="Energie">Energie-Labor</option>
-          <option value="Orokin">Orokin-Labor</option>
-        </select>
-        <span id="research-count-badge" class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-dim); align-self: center;">0 Forschungen</span>
-      </div>
-
-      <!-- Forschungs-Karten Grid -->
-      <div id="dojo-research-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 4px;"></div>
-    </div>
-
-    <!-- 6. KAMPAGNE & HAUPTQUESTS (Deimos Fokus) -->
-    <div class="card">
-      <h2>🗺️ Hauptgeschichte & Deimos Fokus</h2>
-      <div id="campaign-grid" class="grid" style="margin-top: 12px; margin-bottom: 0;"></div>
-    </div>
-
-    <!-- 7. 🏛️ VOLLSTÄNDIGE SYNDIKATS-MATRIX -->
-    <div class="card" style="border-left-color: var(--lotus-purple);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 1.1rem; color: var(--lotus-purple);">🏛️ Duo-Syndikats-Matrix</h2>
-        <span style="font-size: 0.75rem; color: var(--text-dim);">Ränge 0 bis 5 &bull; Trade-Check</span>
-      </div>
-
-      <div style="font-size: 0.8rem; color: var(--gold-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">6 Haupt-Syndikate (Relais & Handel)</div>
-      <div id="core-syndicates-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; margin-bottom: 20px;"></div>
-
-      <div style="font-size: 0.8rem; color: var(--cyan-primary); font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">Open-World & Endgame Fraktionen</div>
-      <div id="endgame-syndicates-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;"></div>
-    </div>
-
-    <!-- 8. 🎯 VISUELLER DUO-FARM-TRACKER & HANGAR -->
-    <div class="card" style="border-left-color: var(--gold-primary);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2 style="margin: 0; font-size: 1.1rem; color: var(--gold-primary);">🎯 Duo-Hangar: Aktive Farm-Ziele</h2>
-        <div style="display: flex; gap: 8px;">
-          <button id="btn-tab-active" onclick="switchFarmTab('active')" style="background: var(--gold-primary); color: #111; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">Aktiv</button>
-          <button id="btn-tab-completed" onclick="switchFarmTab('completed')" style="background: #222; color: #aaa; border: 1px solid #444; padding: 6px 12px; border-radius: 4px; cursor: pointer;">Sammlung (Vault)</button>
-        </div>
-      </div>
-
+      <!-- Such- & Hinzufügen-Leiste mit automatischer Warframe-API-Anbindung -->
       <div id="farm-add-bar" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-        <input list="wf-all-items-datalist" type="text" id="farm-search-input" placeholder="z. B. Dagath, Gauss Prime, Torid..." style="flex: 1; min-width: 200px;">
+        <input list="wf-all-items-datalist" type="text" id="farm-search-input" placeholder="z. B. Torid, Lex Prime, Arcane Energize, Galvanized..." style="flex: 1; min-width: 220px;">
         <datalist id="wf-all-items-datalist"></datalist>
 
         <select id="farm-player-select" style="background: #1a1a24;"></select>
         <button onclick="addFarmTargetFromInput()" style="background: var(--cyan-primary); color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">+ Hinzufügen</button>
       </div>
 
+      <!-- Grid für die Farm-Karten -->
       <div id="farm-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px;">
         <div style="color: var(--text-dim); font-size: 0.9rem;">Lade Farm-Ziele...</div>
+      </div>
+    </div>
+
+    <!-- 5. 🌌 DER WEG NACH TAU (MONDFLEISCH EVENT-TRACKER) -->
+    <div class="card" style="border-left-color: var(--cyan-primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <div>
+          <h2 style="margin: 0; font-size: 1.05rem; color: var(--cyan-primary);">🌌 Der Weg nach Tau &bull; Mondfleisch-Shop</h2>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">Belohnungs-Tracker für beide Spieler</div>
+        </div>
+        <span class="badge status-ready" id="tau-badge">AKTIV 🔥</span>
+      </div>
+
+      <div id="moonflesh-duo-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;"></div>
+    </div>
+
+    <!-- 6. ⚡ ENDGAME & STEEL PATH KOMMANDO (INCARNONS & CAPS) -->
+    <div class="card" style="border-left-color: var(--lotus-purple);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="margin: 0; font-size: 1.05rem; color: var(--lotus-purple);">⚡ Steel Path & Duviri Incarnon Rotation</h2>
+        <span class="badge online" id="reset-daily-timer">Reset in --:--:--</span>
+      </div>
+
+      <!-- Obere Leiste: Standing Caps & SP-Incursionen -->
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-bottom: 15px;">
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Tägliches Ansehen-Cap</div>
+          <div id="standing-caps-list" style="margin-top: 6px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-size: 0.85rem; color: #aaa;">Lade...</div>
+          </div>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; justify-content: space-between;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.75rem; color: var(--gold-primary); text-transform: uppercase; font-weight: bold;">Tägliche SP-Incursionen</span>
+            <span id="sp-incursion-count" class="highlight" style="font-size: 0.85rem;">0 / 5</span>
+          </div>
+          <div style="display: flex; gap: 6px; margin-top: 8px;">
+            <button class="btn-counter" onclick="toggleSpIncursion(0)" id="sp-btn-0">1</button>
+            <button class="btn-counter" onclick="toggleSpIncursion(1)" id="sp-btn-1">2</button>
+            <button class="btn-counter" onclick="toggleSpIncursion(2)" id="sp-btn-2">3</button>
+            <button class="btn-counter" onclick="toggleSpIncursion(3)" id="sp-btn-3">4</button>
+            <button class="btn-counter" onclick="toggleSpIncursion(4)" id="sp-btn-4">5</button>
+            <button class="btn-counter" onclick="resetSpIncursions()" style="color: var(--text-dim); margin-left: auto;">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Duviri Dual-Rotator (Frames & Incarnons) -->
+      <div style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 0.75rem; color: var(--gold-primary); text-transform: uppercase; font-weight: bold;">🌀 Duviri Circuit: Aktuelle Wochen-Rotation</span>
+          <span style="font-size: 0.75rem; color: var(--text-dim);" id="incarnon-week-info">Lade Zyklus...</span>
+        </div>
+        <div id="duviri-rotation-text" style="font-size: 0.95rem; color: #fff; line-height: 1.5;">Lade Rotation...</div>
+      </div>
+
+    <!-- 7. 🏛️ SCHLANKE SYNDIKATS-KONSOLE (DROPDOWN-STEUERUNG) -->
+    <div class="card" style="border-left-color: var(--cyan-primary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+        <h2 style="margin: 0; font-size: 1.05rem; color: var(--cyan-primary);">🏛️ Syndikats-Konsole</h2>
+        <span style="font-size: 0.75rem; color: var(--text-dim);">Duo-Rangvergleich</span>
+      </div>
+
+      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; background: rgba(0,0,0,0.35); padding: 12px; border-radius: 8px;">
+        <div style="flex: 1; min-width: 200px;">
+          <label style="font-size: 0.75rem; color: var(--text-dim); display: block; margin-bottom: 4px;">Fraktion wählen:</label>
+          <select id="syndicate-selector" onchange="updateSyndicateConsoleView()" style="width: 100%;"></select>
+        </div>
+
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <!-- Nexes92 -->
+          <div style="text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--cyan-primary); font-weight: bold;">Nexes92</div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+              <button class="btn-counter" onclick="stepSyndicateRank('Nexes92', -1)">-</button>
+              <span id="syn-rank-nexes" class="highlight" style="min-width: 28px; font-size: 1rem;">R0</span>
+              <button class="btn-counter" onclick="stepSyndicateRank('Nexes92', 1)">+</button>
+            </div>
+          </div>
+
+          <!-- SonofImperator -->
+          <div style="text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--gold-primary); font-weight: bold;">SonofImperator</div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+              <button class="btn-counter" onclick="stepSyndicateRank('SonofImperator', -1)">-</button>
+              <span id="syn-rank-mate" class="highlight" style="min-width: 28px; font-size: 1rem;">R0</span>
+              <button class="btn-counter" onclick="stepSyndicateRank('SonofImperator', 1)">+</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -500,23 +450,13 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const QUEST_LISTE = [
-      "Vors Preis", "Einmal erwacht", "Das Herz von Deimos", "Das Archwing", "Natah",
-      "Der Zweite Traum", "Der Innere Krieg", "Ketten von Harrow", "Apostesie-Prolog",
-      "Das Opfer", "Präludium zum Krieg", "Der Neue Krieg", "Engel des Zariman",
-      "Flüstern in den Wänden", "Warframe: 1999"
-    ];
-
-    const CORE_SYNDICATES = [
+    const ALL_SYNDICATES = [
       { id: "steel_meridian", name: "Steel Meridian" },
       { id: "arbiters_hexis", name: "Arbiters of Hexis" },
       { id: "cephalon_suda", name: "Cephalon Suda" },
       { id: "perrin_sequence", name: "The Perrin Sequence" },
       { id: "red_veil", name: "Red Veil" },
-      { id: "new_loka", name: "New Loka" }
-    ];
-
-    const ENDGAME_SYNDICATES = [
+      { id: "new_loka", name: "New Loka" },
       { id: "ostron", name: "🌾 Ostron (Cetus)" },
       { id: "solaris_united", name: "❄️ Solaris United (Fortuna)" },
       { id: "entrati", name: "💀 Entrati (Deimos)" },
@@ -525,16 +465,11 @@
       { id: "cavia", name: "👁️ Cavia (Sanctum)" }
     ];
 
-    function holeNaechsteQuest(aktuelle) {
-      const idx = QUEST_LISTE.indexOf(aktuelle);
-      if (idx !== -1 && idx + 1 < QUEST_LISTE.length) return QUEST_LISTE[idx + 1];
-      return "Endstand erreicht 🎉";
-    }
-
     let cachedPlayers = [];
+    let syndicateRanksMap = {};
 
     // ==========================================
-    // 1. SPIELER-STATUS & DOJO-XP & KAMPAGNE
+    // 1. SPIELER-STATUS & ANSEHEN-CAPS
     // ==========================================
     async function ladeDashboardDaten() {
       try {
@@ -562,7 +497,7 @@
               const mr = p.mastery_rank || (p.player_name.toLowerCase() === 'nexes92' ? 16 : 14);
               const cap = 16000 + (mr * 750);
               return `
-                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.88rem;">
                   <span style="color: #fff; font-weight: 600;">${p.player_name} (MR ${mr}):</span>
                   <span style="color: var(--gold-primary); font-weight: bold;">${cap.toLocaleString()} / Tag</span>
                 </div>
@@ -598,191 +533,247 @@
             }
           });
         }
-
-        // DOJO-INFO
-        const { data: dojoData } = await supabaseClient
-          .from('dojo_info')
-          .select('*')
-          .eq('clan_name', 'THELOSTPRIMARCHS')
-          .single();
-
-        if (dojoData) {
-          document.getElementById('clan-name').innerText = dojoData.clan_name;
-          document.getElementById('clan-rank').innerText = "Rang " + dojoData.clan_rank;
-
-          const currentXp = dojoData.current_xp || 0;
-          const targetXp = dojoData.xp_for_next_rank || 1;
-          const diff = targetXp - currentXp;
-          const percent = Math.min(100, Math.max(0, Math.round((currentXp / targetXp) * 100)));
-
-          const xpBar = document.getElementById('xp-bar');
-          const xpText = document.getElementById('xp-text');
-          const levelUpText = document.getElementById('clan-levelup');
-
-          if (dojoData.level_up_ready || diff <= 0) {
-            xpText.innerText = "100% (Maximum erreicht)";
-            xpBar.style.width = "100%";
-            xpBar.className = "progress-bar progress-ready";
-            levelUpText.innerHTML = "<span class='highlight'>🎉 BEREIT AM ALTAR!</span>";
-          } else {
-            xpText.innerText = `${percent}% (fehlen noch ${diff.toLocaleString()} XP)`;
-            xpBar.style.width = percent + "%";
-            xpBar.className = "progress-bar";
-            levelUpText.innerText = "Forschung läuft";
-          }
-        }
-
-        // KAMPAGNE & DEIMOS
-        const { data: campaignData } = await supabaseClient
-          .from('campaign_progress')
-          .select('*')
-          .order('player_name', { ascending: true });
-
-        if (campaignData) {
-          const campGrid = document.getElementById('campaign-grid');
-          if (campGrid) {
-            campGrid.innerHTML = '';
-            campaignData.forEach(c => {
-              let questOptionsHtml = '';
-              QUEST_LISTE.forEach(q => {
-                questOptionsHtml += `<option value="${q}" ${q === c.current_quest ? 'selected' : ''}>${q}</option>`;
-              });
-
-              campGrid.innerHTML += `
-                <div style="background: rgba(0,0,0,0.4); padding:16px; border-radius:10px; border:1px solid rgba(255,255,255,0.08);">
-                  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:10px; margin-bottom:12px;">
-                    <h3 style="margin:0; font-size:1.05rem; color:var(--cyan-primary); letter-spacing:0.5px;">⚔️ ${c.player_name}</h3>
-                    <span class="badge ${c.quest_status === 'Abgeschlossen' ? 'status-ready' : 'status-tausch'}" style="cursor:pointer;" onclick="toggleQuestStatus(${c.id}, '${c.quest_status || 'Aktiv'}')">
-                      ${c.quest_status || 'Aktiv'} 🔄
-                    </span>
-                  </div>
-
-                  <div style="background:rgba(255,255,255,0.03); padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); margin-bottom:12px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                      <span style="font-size:0.75rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px;">Aktuelle Hauptquest:</span>
-                      <select onchange="aendereQuest(${c.id}, this.value)" style="background:rgba(0,0,0,0.6); color:var(--cyan-primary); border:1px solid rgba(0,229,255,0.3); font-size:0.75rem; padding:3px 6px; border-radius:6px;">
-                        ${questOptionsHtml}
-                      </select>
-                    </div>
-                    <div style="font-size:1.05rem; font-weight:bold; color:#fff; margin:6px 0 2px 0;">📜 ${c.current_quest || 'Der Zweite Traum'}</div>
-                    <div style="font-size:0.82rem; color:var(--text-dim);">
-                      Nächste Quest: <span style="color:var(--gold-primary); font-weight:600;">${c.next_quest || holeNaechsteQuest(c.current_quest)}</span>
-                    </div>
-                  </div>
-
-                  <div class="info-row">
-                    <span class="label">🪙 Mutter-Marken (Vorrat):</span>
-                    <span class="val">
-                      <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, -10)">-10</button>
-                      <span class="highlight" style="display:inline-block; min-width:35px; text-align:center;">${c.mother_tokens}</span>
-                      <button class="btn-counter" onclick="aendereSyndikatTokens(${c.id}, 10)">+10</button>
-                    </span>
-                  </div>
-                </div>
-              `;
-            });
-          }
-        }
       } catch (err) {
         console.error("Dashboard-Fehler:", err);
       }
     }
 
-    async function aendereQuest(id, neueQuest) {
-      const naechste = holeNaechsteQuest(neueQuest);
-      await supabaseClient.from('campaign_progress').update({ 
-        current_quest: neueQuest,
-        next_quest: naechste
-      }).eq('id', id);
-      ladeDashboardDaten();
-    }
-
-    async function toggleQuestStatus(id, currentStatus) {
-      const neuerStatus = currentStatus === 'Aktiv' ? 'Abgeschlossen' : 'Aktiv';
-      await supabaseClient.from('campaign_progress').update({ quest_status: neuerStatus }).eq('id', id);
-      ladeDashboardDaten();
-    }
-
-    async function aendereSyndikatTokens(id, delta) {
-      const { data } = await supabaseClient.from('campaign_progress').select('mother_tokens').eq('id', id).single();
-      if (data) {
-        const neuerWert = Math.max(0, (data.mother_tokens || 0) + delta);
-        await supabaseClient.from('campaign_progress').update({ mother_tokens: neuerWert }).eq('id', id);
-        ladeDashboardDaten();
-      }
-    }
-
     // ==========================================
-    // 2. 🏛️ SYNDIKATS-MATRIX (DUO-VERGLEICH)
+    // 2. 🎯 VISUELLER DUO-FARM-TRACKER (HANGAR)
     // ==========================================
-    async function ladeSyndikatsMatrix() {
+    const WF_SUGGESTIONS = [
+      "Torid", "Lex Prime", "Dual Toxocyst", "Latron Prime", "Ceramic Dagger", "Burston Prime",
+      "Magistar", "Furis", "Braton Prime", "Boar Prime", "Angstrum", "Dual Ichor",
+      "Arcane Energize", "Arcane Grace", "Arcane Aegis", "Primary Merciless", "Secondary Deadhead",
+      "Galvanized Chamber", "Galvanized Diffusion", "Galvanized Hell", "Galvanized Aptitude",
+      "Dagath", "Gauss Prime", "Grendel Prime", "Wisp Prime", "Khora Prime", "Protea Prime", 
+      "Sevagoth Prime", "Xaku Prime", "Rhino Prime", "Nekros Prime", "Mesa Prime", "Volt Prime"
+    ];
+
+    function initFarmAutocomplete() {
+      const dl = document.getElementById("wf-all-items-datalist");
+      if (!dl) return;
+      dl.innerHTML = WF_SUGGESTIONS.sort().map(item => `<option value="${item}">`).join('');
+    }
+    initFarmAutocomplete();
+
+    let currentFarmTab = 'active';
+
+    function switchFarmTab(tab) {
+      currentFarmTab = tab;
+      document.getElementById('btn-tab-active').style.background = tab === 'active' ? 'var(--gold-primary)' : '#222';
+      document.getElementById('btn-tab-active').style.color = tab === 'active' ? '#111' : '#aaa';
+      document.getElementById('btn-tab-completed').style.background = tab === 'completed' ? 'var(--gold-primary)' : '#222';
+      document.getElementById('btn-tab-completed').style.color = tab === 'completed' ? '#111' : '#aaa';
+      document.getElementById('farm-add-bar').style.display = tab === 'active' ? 'flex' : 'none';
+      ladeFarmTargets();
+    }
+
+    async function ladeFarmTargets() {
+      const grid = document.getElementById('farm-grid');
+      if (!grid) return;
+      const isCompleted = currentFarmTab === 'completed';
+
       try {
-        const { data: allRanks } = await supabaseClient.from('syndicate_ranks').select('*');
-        const ranksMap = {};
-        (allRanks || []).forEach(r => {
-          if (r.player_name && r.syndicate_id) {
-            ranksMap[`${r.player_name.toLowerCase()}_${r.syndicate_id}`] = r.rank;
-          }
-        });
+        const { data: targets, error } = await supabaseClient
+          .from('farm_targets')
+          .select('*')
+          .eq('is_completed', isCompleted);
 
-        const p1 = "Nexes92";
-        const p2 = "SonofImperator";
-
-        function renderSyndicateGrid(syndicatesList, containerId) {
-          const container = document.getElementById(containerId);
-          if (!container) return;
-
-          container.innerHTML = syndicatesList.map(s => {
-            const r1 = ranksMap[`${p1.toLowerCase()}_${s.id}`] || 0;
-            const r2 = ranksMap[`${p2.toLowerCase()}_${s.id}`] || 0;
-            const isMaxedAny = (r1 === 5 || r2 === 5);
-
-            return `
-              <div class="syndicate-card ${isMaxedAny ? 'gemaxt' : ''}">
-                <div>
-                  <div style="font-weight: bold; font-size: 0.95rem; color: #fff;">${s.name}</div>
-                  <div style="font-size: 0.75rem; color: ${isMaxedAny ? 'var(--gold-primary)' : 'var(--text-dim)'}; margin-top: 2px;">
-                    ${isMaxedAny ? '★ Rang 5 erreicht (Tauschbereit!)' : 'Rang-Auswahl'}
-                  </div>
-                </div>
-                <div style="display: flex; gap: 8px; align-items: center;">
-                  <div style="text-align: center;">
-                    <span style="font-size: 0.7rem; color: var(--cyan-primary); display: block;">${p1}</span>
-                    <select onchange="updateSyndicateRank('${p1}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
-                      ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r1 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
-                    </select>
-                  </div>
-                  <div style="text-align: center;">
-                    <span style="font-size: 0.7rem; color: var(--gold-primary); display: block;">${p2}</span>
-                    <select onchange="updateSyndicateRank('${p2}', '${s.id}', this.value)" style="padding: 2px 4px; font-size: 0.8rem; background: #111;">
-                      ${[0,1,2,3,4,5].map(rk => `<option value="${rk}" ${r2 === rk ? 'selected' : ''}>R${rk}</option>`).join('')}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            `;
-          }).join('');
+        if (error || !targets) {
+          grid.innerHTML = '<div style="color: var(--status-red);">Fehler beim Laden der Farm-Ziele.</div>';
+          return;
         }
 
-        renderSyndicateGrid(CORE_SYNDICATES, 'core-syndicates-grid');
-        renderSyndicateGrid(ENDGAME_SYNDICATES, 'endgame-syndicates-grid');
+        if (targets.length === 0) {
+          grid.innerHTML = `<div style="color: var(--text-dim); grid-column: 1/-1; text-align: center; padding: 25px;">
+            ${isCompleted ? 'Noch keine archivierten Items in der Sammlung.' : 'Keine aktiven Farm-Ziele. Füge oben eins hinzu!'}
+          </div>`;
+          return;
+        }
+
+        targets.forEach(t => {
+          const owned = (t.parts || []).filter(p => p.owned).length;
+          t.progress = t.parts && t.parts.length > 0 ? (owned / t.parts.length) : 0;
+        });
+
+        if (!isCompleted) {
+          targets.sort((a, b) => b.progress - a.progress);
+        }
+
+        grid.innerHTML = targets.map(t => {
+          const ownedCount = (t.parts || []).filter(p => p.owned).length;
+          const totalCount = (t.parts || []).length;
+          const percent = Math.round(t.progress * 100);
+          const imgSrc = t.image_url || "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
+
+          return `
+          <div style="background: rgba(0, 0, 0, 0.45); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                <img src="${imgSrc}" 
+                     style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
+                     alt="${t.item_name}" 
+                     onerror="this.onerror=null; this.src='https://wiki.warframe.com/images/thumb/7/77/Lotus_Symbol.png/64px-Lotus_Symbol.png';">
+                <div>
+                  <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
+                  <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
+                  <div style="font-size: 0.8rem; color: var(--cyan-primary);">${ownedCount}/${totalCount} Teile (${percent}%)</div>
+                </div>
+              </div>
+
+              <div style="width: 100%; height: 5px; background: #222; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+                <div style="width: ${percent}%; height: 100%; background: ${percent === 100 ? 'var(--gold-primary)' : 'var(--cyan-primary)'}; transition: width 0.3s;"></div>
+              </div>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;">
+                ${(t.parts || []).map((p, idx) => {
+                  const bg = p.owned ? '#1b4332' : 'rgba(255, 255, 255, 0.05)';
+                  const border = p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)';
+                  const col = p.owned ? 'var(--status-green)' : 'var(--text-dim)';
+                  return `
+                  <button onclick="toggleFarmPart(${t.id},${idx})" 
+                          style="background: ${bg}; border: 1px solid ${border}; color:${col}; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                    ${p.owned ? '✓ ' : ''}${p.name}
+                  </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
+              ${!t.is_completed ? `
+                <button onclick="completeFarmTarget(${t.id})" 
+                        style="background: ${percent === 100 ? 'var(--gold-primary)' : 'transparent'}; 
+                               color: ${percent === 100 ? '#111' : 'var(--text-dim)'}; 
+                               border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)'}; 
+                               padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">
+                  ${percent === 100 ? '⭐ Fertig (In Vault)' : 'Archivieren'}
+                </button>
+              ` : `
+                <button onclick="uncompleteFarmTarget(${t.id})" style="background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
+                  Zurück zu Aktiv
+                </button>
+              `}
+              <button onclick="deleteFarmTarget(${t.id})" style="background: transparent; color: var(--status-red); border: none; font-size: 1rem; cursor: pointer;" title="Löschen">🗑️</button>
+            </div>
+          </div>
+          `;
+        }).join('');
       } catch (e) {
-        console.error("Fehler in ladeSyndikatsMatrix:", e);
+        console.error("Fehler bei Farm-Zielen:", e);
       }
     }
 
-    async function updateSyndicateRank(playerName, syndicateId, rankValue) {
-      await supabaseClient.from('syndicate_ranks').upsert({
-        player_name: playerName,
-        syndicate_id: syndicateId,
-        rank: parseInt(rankValue, 10),
+    async function toggleFarmPart(targetId, partIndex) {
+      const { data: target } = await supabaseClient.from('farm_targets').select('parts').eq('id', targetId).single();
+      if (!target) return;
+
+      const updatedParts = [...target.parts];
+      updatedParts[partIndex].owned = !updatedParts[partIndex].owned;
+
+      await supabaseClient.from('farm_targets').update({
+        parts: updatedParts,
         updated_at: new Date().toISOString()
-      }, { onConflict: 'player_name,syndicate_id' });
-      ladeSyndikatsMatrix();
+      }).eq('id', targetId);
+
+      ladeFarmTargets();
+    }
+
+    async function completeFarmTarget(targetId) {
+      await supabaseClient.from('farm_targets').update({
+        is_completed: true,
+        updated_at: new Date().toISOString()
+      }).eq('id', targetId);
+      ladeFarmTargets();
+    }
+
+    async function uncompleteFarmTarget(targetId) {
+      await supabaseClient.from('farm_targets').update({
+        is_completed: false,
+        updated_at: new Date().toISOString()
+      }).eq('id', targetId);
+      ladeFarmTargets();
+    }
+
+    async function deleteFarmTarget(targetId) {
+      if (!confirm('Ziel wirklich löschen?')) return;
+      await supabaseClient.from('farm_targets').delete().eq('id', targetId);
+      ladeFarmTargets();
+    }
+
+    async function addFarmTargetFromInput() {
+      const input = document.getElementById('farm-search-input');
+      const query = input.value.trim();
+      const playerName = document.getElementById('farm-player-select').value;
+      if (!query) return;
+
+      let parts = [];
+      let imageUrl = null;
+      let finalName = query;
+
+      try {
+        const res = await fetch(`https://api.warframestat.us/items/search/${encodeURIComponent(query)}`);
+        if (res.ok) {
+          const items = await res.json();
+          const match = items.find(i => i.name.toLowerCase() === query.toLowerCase()) || items[0];
+
+          if (match) {
+            finalName = match.name;
+            if (match.imageName) {
+              imageUrl = `https://cdn.warframestat.us/img/${match.imageName}`;
+            }
+            if (match.components && match.components.length > 0) {
+              parts = match.components
+                .filter(c => !c.name.toLowerCase().includes("orokin-zelle") && !c.name.toLowerCase().includes("argon"))
+                .map(c => ({ name: c.name, owned: false }));
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("API Fehler, nutze Standard-Teile:", e);
+      }
+
+      if (parts.length === 0) {
+        const lower = query.toLowerCase();
+        if (lower.includes("arcane") || lower.includes("arkana")) {
+          parts = [
+            { name: "Rang 1 (3)", owned: false },
+            { name: "Rang 2 (6)", owned: false },
+            { name: "Rang 3 (10)", owned: false },
+            { name: "Rang 4 (15)", owned: false },
+            { name: "Rang 5 (21)", owned: false }
+          ];
+        } else if (lower.includes("mod") || lower.includes("galvanized")) {
+          parts = [
+            { name: "Basis-Mod", owned: false },
+            { name: "Rang 5", owned: false },
+            { name: "Rang 10 (Max)", owned: false }
+          ];
+        } else {
+          parts = [
+            { name: "Blaupause", owned: false },
+            { name: "Lauf / Chassis", owned: false },
+            { name: "Gehäuse / Neuroptik", owned: false },
+            { name: "Griff / Systeme", owned: false }
+          ];
+        }
+      }
+
+      await supabaseClient.from('farm_targets').insert([{
+        player_name: playerName,
+        item_name: finalName,
+        image_url: imageUrl,
+        parts: parts,
+        is_completed: false
+      }]);
+
+      input.value = '';
+      ladeFarmTargets();
     }
 
     // ==========================================
-    // 3. 🥩 DUO-MONDFLEISCH TRACKER (FÜR BEIDE SPIELER)
+    // 3. 🥩 DUO-MONDFLEISCH TRACKER
     // ==========================================
     const MOONFLESH_TARGETS = {
       1625: "Must-Haves (Scherben & Kern) [1.625]",
@@ -886,16 +877,122 @@
     }
 
     // ==========================================
-    // 4. ⚡ RESET-HUB MIT AUTOMATISCHEM RESET
+    // 4. ⚡ STEEL PATH INCARNONS & NORMALE FRAMES ROTATOR
     // ==========================================
-    const TASKS = [
-      { id: "riven_palladino", name: "Palladino (10 Scherben)" },
-      { id: "archon_hunt", name: "Archon-Jagd (Shard)" },
-      { id: "netracells_eda", name: "Netracells / EDA (5/5)" },
-      { id: "tasks_1999", name: "1999 Wochenkalender" }
+    const DUVIRI_FRAMES_WEEKS = [
+      ["Excalibur", "Trinity", "Ember"],
+      ["Loki", "Mag", "Rhino"],
+      ["Ash", "Frost", "Nyx"],
+      ["Saryn", "Vauban", "Nova"],
+      ["Nekros", "Valkyr", "Oberon"],
+      ["Hydroid", "Mirage", "Limbo"],
+      ["Mesa", "Chroma", "Atlas"],
+      ["Ivara", "Inaros", "Titania"],
+      ["Nidus", "Octavia", "Harrow"],
+      ["Gara", "Khora", "Revenant"],
+      ["Garuda", "Baruuk", "Hildryn"]
     ];
 
-    let globalRivenCount = 0;
+    const DUVIRI_INCARNONS_WEEKS = [
+      { w: 1, meta: ["Braton", "Lato"], items: ["Braton", "Lato", "Skana", "Paris", "Kunai"] },
+      { w: 2, meta: ["Boar", "Angstrum"], items: ["Boar", "Gammacor", "Angstrum", "Gorgon", "Anku"] },
+      { w: 3, meta: ["Latron", "Strun"], items: ["Bo", "Latron", "Furis", "Furax", "Strun"] },
+      { w: 4, meta: ["Lex", "Ceramic Dagger", "Magistar"], items: ["Lex", "Magistar", "Boltor", "Bronco", "Ceramic Dagger"] },
+      { w: 5, meta: ["Torid", "Dual Toxocyst", "Dual Ichor"], items: ["Torid", "Dual Toxocyst", "Dual Ichor", "Miter", "Atomos"] },
+      { w: 6, meta: ["Burston"], items: ["Ack & Brunt", "Soma", "Vasto", "Nami Solo", "Burston"] },
+      { w: 7, meta: ["Dread", "Hate"], items: ["Zylok", "Sibear", "Dread", "Despair", "Hate"] },
+      { w: 8, meta: ["Sybaris", "Okina"], items: ["Dera", "Sybaris", "Cestra", "Sicarus", "Okina"] }
+    ];
+
+    function ladeDuviriIncarnonRotation() {
+      const el = document.getElementById("duviri-rotation-text");
+      const weekInfo = document.getElementById("incarnon-week-info");
+      if (!el) return;
+
+      const jetzt = Date.now();
+
+      // Incarnon-Woche (8er-Zyklus)
+      const basisIncarnon = new Date("2024-01-08T00:00:00Z").getTime();
+      const wochenInc = Math.floor((jetzt - basisIncarnon) / (7 * 24 * 60 * 60 * 1000));
+      const idxInc = ((wochenInc % 8) + 8) % 8;
+      const rotInc = DUVIRI_INCARNONS_WEEKS[idxInc];
+
+      // Normaler Frame-Zyklus (11er-Zyklus)
+      const basisFrame = new Date("2024-01-08T00:00:00Z").getTime();
+      const wochenFrame = Math.floor((jetzt - basisFrame) / (7 * 24 * 60 * 60 * 1000));
+      const idxFrame = ((wochenFrame % 11) + 11) % 11;
+      const frames = DUVIRI_FRAMES_WEEKS[idxFrame];
+
+      if (weekInfo) {
+        weekInfo.innerHTML = `<span style="color:var(--cyan-primary);">Frames: W${idxFrame + 1}/11</span> &bull; <span style="color:var(--gold-primary);">Incarnons: W${rotInc.w}/8</span>`;
+      }
+
+      const incarnonBadges = rotInc.items.map(name => {
+        const isMeta = rotInc.meta.includes(name);
+        return `
+          <span style="display: inline-block; background: ${isMeta ? 'rgba(229,185,92,0.15)' : 'rgba(255,255,255,0.05)'}; 
+                       border: 1px solid ${isMeta ? 'var(--gold-primary)' : 'rgba(255,255,255,0.15)'}; 
+                       color: ${isMeta ? 'var(--gold-primary)' : '#fff'}; 
+                       padding: 3px 8px; border-radius: 4px; margin: 2px 3px; font-weight: ${isMeta ? 'bold' : 'normal'}; font-size: 0.82rem;">
+            ${isMeta ? '⭐ ' : ''}${name}
+          </span>
+        `;
+      }).join('');
+
+      const frameBadges = frames.map(name => `
+        <span style="display: inline-block; background: rgba(0, 229, 255, 0.1); 
+                     border: 1px solid rgba(0, 229, 255, 0.35); 
+                     color: var(--cyan-primary); 
+                     padding: 3px 8px; border-radius: 4px; margin: 2px 3px; font-weight: 600; font-size: 0.82rem;">
+          ${name}
+        </span>
+      `).join('');
+
+      el.innerHTML = `
+        <div style="margin-bottom: 10px;">
+          <div style="font-size: 0.72rem; color: var(--cyan-primary); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">
+            Normaler Circuit (Warframe-Blaupausen):
+          </div>
+          <div>${frameBadges}</div>
+        </div>
+        <div>
+          <div style="font-size: 0.72rem; color: var(--gold-primary); text-transform: uppercase; font-weight: bold; margin-bottom: 4px;">
+            Steel Path Circuit (Incarnon Adapter):
+          </div>
+          <div>${incarnonBadges}</div>
+        </div>
+      `;
+    }
+
+    // SP-Incursions (5 tägliche Alarme lokal / temporär gespeichert)
+    let spIncursions = JSON.parse(localStorage.getItem("wf_sp_incursions") || "[false, false, false, false, false]");
+
+    function renderSpIncursionsUI() {
+      const doneCount = spIncursions.filter(Boolean).length;
+      const countEl = document.getElementById("sp-incursion-count");
+      if (countEl) countEl.innerText = `${doneCount} / 5 Erledigt (+${doneCount * 5} Essenz)`;
+
+      for (let i = 0; i < 5; i++) {
+        const btn = document.getElementById(`sp-btn-${i}`);
+        if (btn) {
+          btn.style.background = spIncursions[i] ? 'var(--status-green)' : 'rgba(255,255,255,0.06)';
+          btn.style.borderColor = spIncursions[i] ? 'var(--status-green)' : 'rgba(255,255,255,0.2)';
+          btn.style.color = spIncursions[i] ? '#000' : '#fff';
+        }
+      }
+    }
+
+    function toggleSpIncursion(idx) {
+      spIncursions[idx] = !spIncursions[idx];
+      localStorage.setItem("wf_sp_incursions", JSON.stringify(spIncursions));
+      renderSpIncursionsUI();
+    }
+
+    function resetSpIncursions() {
+      spIncursions = [false, false, false, false, false];
+      localStorage.setItem("wf_sp_incursions", JSON.stringify(spIncursions));
+      renderSpIncursionsUI();
+    }
 
     function updateDailyResetTimer() {
       const now = new Date();
@@ -915,487 +1012,72 @@
     setInterval(updateDailyResetTimer, 1000);
     updateDailyResetTimer();
 
-    function getLetzterMontagUTC() {
-      const d = new Date();
-      const day = d.getUTCDay();
-      const diff = d.getUTCDate() - day + (day === 0 ? -6 : 1);
-      return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), diff, 0, 0, 0, 0)).getTime();
-    }
-
-    async function ladeWeeklyChecklist() {
-      const container = document.getElementById("weekly-checklist-grid");
-      if (!container) return;
+    // ==========================================
+    // 5. 🏛️ SCHLANKE SYNDIKATS-KONSOLE
+    // ==========================================
+    async function initSyndicateConsole() {
+      const selector = document.getElementById("syndicate-selector");
+      if (selector) {
+        selector.innerHTML = ALL_SYNDICATES.map(s => `<option value="${s.id}">${s.name}</option>`).join('');
+      }
 
       try {
-        const { data: listData } = await supabaseClient.from("weekly_checklist").select("*");
-        const letzterMontag = getLetzterMontagUTC();
-
-        if (listData && listData.length > 0) {
-          for (const item of listData) {
-            const itemUpdate = item.updated_at ? new Date(item.updated_at).getTime() : 0;
-            if (item.is_done && itemUpdate < letzterMontag) {
-              await supabaseClient.from("weekly_checklist").update({
-                is_done: false,
-                updated_at: new Date().toISOString()
-              }).match({ player_name: item.player_name, task_id: item.task_id });
-            }
+        const { data: allRanks } = await supabaseClient.from('syndicate_ranks').select('*');
+        syndicateRanksMap = {};
+        (allRanks || []).forEach(r => {
+          if (r.player_name && r.syndicate_id) {
+            syndicateRanksMap[`${r.player_name.toLowerCase()}_${r.syndicate_id}`] = r.rank;
           }
-        }
-
-        const rivenEntry = (listData || []).find(d => d.task_id === "riven_palladino");
-        if (rivenEntry) {
-          globalRivenCount = rivenEntry.riven_count || 0;
-          const countEl = document.getElementById("riven-shard-count");
-          if (countEl) countEl.innerText = globalRivenCount;
-        }
-
-        const playerNames = cachedPlayers.length > 0 ? cachedPlayers.map(p => p.player_name) : ["Nexes92", "SonofImperator"];
-
-        container.innerHTML = playerNames.map(player => `
-          <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.06);">
-            <div style="font-weight: bold; font-size: 0.85rem; color: var(--cyan-primary); margin-bottom: 8px;">${player}</div>
-            ${TASKS.map(task => {
-              const entry = (listData || []).find(d => d.player_name.toLowerCase() === player.toLowerCase() && d.task_id === task.id);
-              const isDone = entry ? entry.is_done : false;
-
-              return `
-                <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; cursor: pointer; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
-                  <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleWeeklyTask('${player}', '${task.id}',${isDone})" style="cursor: pointer;">
-                  <span>${task.name}</span>
-                </label>
-              `;
-            }).join('')}
-          </div>
-        `).join('');
-      } catch (e) {
-        console.error("Fehler bei Checkliste:", e);
-      }
-    }
-
-    async function toggleWeeklyTask(playerName, taskId, currentDone) {
-      await supabaseClient.from("weekly_checklist").upsert({
-        player_name: playerName,
-        task_id: taskId,
-        is_done: !currentDone,
-        riven_count: globalRivenCount,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'player_name,task_id' });
-      ladeWeeklyChecklist();
-    }
-
-    async function aendereRivenScherben(delta) {
-      globalRivenCount = Math.max(0, globalRivenCount + delta);
-      const countEl = document.getElementById("riven-shard-count");
-      if (countEl) countEl.innerText = globalRivenCount;
-
-      await supabaseClient.from("weekly_checklist").upsert({
-        player_name: "Global",
-        task_id: "riven_palladino",
-        riven_count: globalRivenCount,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'player_name,task_id' });
-    }
-
-  // ==========================================
-    // DUVIRI CIRCUIT (FRAMES & STEEL PATH INCARNONS)
-    // ==========================================
-    const DUVIRI_FRAMES = [
-      ["Excalibur", "Trinity", "Ember"],
-      ["Loki", "Mag", "Rhino"],
-      ["Ash", "Frost", "Nyx"],
-      ["Saryn", "Vauban", "Nova"],
-      ["Nekros", "Valkyr", "Oberon"],
-      ["Hydroid", "Mirage", "Limbo"],
-      ["Mesa", "Chroma", "Atlas"],
-      ["Ivara", "Inaros", "Titania"],
-      ["Nidus", "Octavia", "Harrow"],
-      ["Gara", "Khora", "Revenant"],
-      ["Garuda", "Baruuk", "Hildryn"]
-    ];
-
-    const DUVIRI_INCARNONS = [
-      ["Braton", "Lato", "Skana", "Paris", "Kunai"],
-      ["Boar", "Gammacor", "Angstrum", "Gorgon", "Anku"],
-      ["Bo", "Latron", "Furis", "Furax", "Strun"],
-      ["Lex", "Magistar", "Boltor", "Bronco", "Ceramic Dagger"],
-      ["Torid", "Dual Toxocyst", "Dual Ichor", "Miter", "Atomos"],
-      ["Ack & Brunt", "Soma", "Vasto", "Nami Solo", "Burston"],
-      ["Zylok", "Sibear", "Dread", "Despair", "Hate"],
-      ["Dera", "Sybaris", "Cestra", "Sicarus", "Okina"]
-    ];
-
-    function ladeWorldstateDaten() {
-      const rotationEl = document.getElementById("duviri-rotation-text");
-      if (!rotationEl) return;
-
-      const jetzt = Date.now();
-
-      // Frame-Woche (11er-Zyklus)
-      const basisFrame = new Date("2024-01-08T00:00:00Z").getTime();
-      const wochenFrame = Math.floor((jetzt - basisFrame) / (7 * 24 * 60 * 60 * 1000));
-      const idxFrame = ((wochenFrame % 11) + 11) % 11;
-      const frames = DUVIRI_FRAMES[idxFrame];
-
-      // Incarnon-Woche (8er-Zyklus)
-      const basisIncarnon = new Date("2024-01-08T00:00:00Z").getTime();
-      const wochenIncarnon = Math.floor((jetzt - basisIncarnon) / (7 * 24 * 60 * 60 * 1000));
-      const idxIncarnon = ((wochenIncarnon % 8) + 8) % 8;
-      const incarnons = DUVIRI_INCARNONS[idxIncarnon];
-
-      rotationEl.innerHTML = `
-        <div style="margin-bottom: 4px;">
-          <strong style="color: var(--cyan-primary);">Frames:</strong> ${frames.join(", ")}
-        </div>
-        <div>
-          <strong style="color: var(--gold-primary);">Steel Path Incarnons:</strong> ${incarnons.join(", ")}
-        </div>
-      `;
-    }
-
-    // ==========================================
-    // 5. 🧪 DOJO FORSCHUNGS-HANGAR (dojo_research)
-    // ==========================================
-    let currentResearchTab = 'active';
-    let cachedResearches = [];
-
-    function switchResearchTab(tab) {
-      currentResearchTab = tab;
-      document.getElementById('btn-research-active').style.background = tab === 'active' ? 'var(--gold-primary)' : '#222';
-      document.getElementById('btn-research-active').style.color = tab === 'active' ? '#111' : '#aaa';
-      document.getElementById('btn-research-completed').style.background = tab === 'completed' ? 'var(--gold-primary)' : '#222';
-      document.getElementById('btn-research-completed').style.color = tab === 'completed' ? '#111' : '#aaa';
-      filtriereDojoForschungen();
-    }
-
-    async function ladeDojoForschungen() {
-      try {
-        const { data: researches, error } = await supabaseClient
-          .from("dojo_research")
-          .select("*")
-          .order("item_name", { ascending: true });
-
-        if (error) {
-          console.warn("Dojo Research DB Fehler:", error);
-          const container = document.getElementById("dojo-research-list");
-          if (container) container.innerHTML = `<div style="font-size:0.8rem; color:var(--status-red); grid-column:1/-1;">Supabase: ${error.message}</div>`;
-          return;
-        }
-
-        cachedResearches = researches || [];
-        filtriereDojoForschungen();
-      } catch (err) {
-        console.error("Fehler bei dojo_research:", err);
-      }
-    }
-
-    function filtriereDojoForschungen() {
-      const container = document.getElementById("dojo-research-list");
-      const badge = document.getElementById("research-count-badge");
-      if (!container) return;
-
-      const isCompletedTab = currentResearchTab === 'completed';
-      const searchStr = (document.getElementById("research-search-input")?.value || "").toLowerCase().trim();
-      const labFilter = document.getElementById("research-lab-filter")?.value || "all";
-
-      const filtered = cachedResearches.filter(r => {
-        const isDone = !!r.is_completed;
-        if (isDone !== isCompletedTab) return false;
-
-        const name = (r.item_name || r.name || "").toLowerCase();
-        const lab = (r.lab || r.category || "").toLowerCase();
-
-        if (searchStr && !name.includes(searchStr)) return false;
-        if (labFilter !== 'all' && !lab.includes(labFilter.toLowerCase())) return false;
-
-        return true;
-      });
-
-      const totalCompleted = cachedResearches.filter(r => r.is_completed).length;
-      if (badge) badge.innerText = `${totalCompleted} / ${cachedResearches.length} Erforscht`;
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 30px;">
-          ${isCompletedTab ? 'Noch keine archivierten Forschungen.' : 'Keine offenen Forschungen für diesen Filter gefunden.'}
-        </div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(r => {
-        const name = r.item_name || r.name || "Forschung";
-        const lab = r.lab || r.category || "Labor";
-        const isDone = !!r.is_completed;
-
-        return `
-          <div style="background: rgba(0,0,0,0.4); border: 1px solid ${isDone ? 'rgba(46, 213, 115, 0.3)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="font-weight: bold; font-size: 0.95rem; color: ${isDone ? 'var(--text-dim)' : '#fff'}; text-decoration: ${isDone ? 'line-through' : 'none'};">
-                ${name}
-              </div>
-              <div style="font-size: 0.75rem; color: var(--cyan-primary); margin-top: 4px;">🔬 ${lab}</div>
-            </div>
-            <div style="margin-top: 10px; display: flex; justify-content: flex-end;">
-              <button onclick="toggleResearchStatus(${r.id}, ${isDone})" class="btn-counter" style="font-size: 0.75rem; border-color: ${isDone ? 'var(--gold-primary)' : 'var(--status-green)'};">
-                ${isDone ? '↩️ Zurück zu Offen' : '✓ Erforscht'}
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    async function toggleResearchStatus(id, currentStatus) {
-      await supabaseClient
-        .from("dojo_research")
-        .update({ is_completed: !currentStatus, updated_at: new Date().toISOString() })
-        .eq("id", id);
-      
-      const item = cachedResearches.find(r => r.id === id);
-      if (item) item.is_completed = !currentStatus;
-      filtriereDojoForschungen();
-      ladeDashboardDaten();
-    }
-
-    // ==========================================
-    // 6. 🎯 VISUELLER DUO-FARM-TRACKER (HANGAR)
-    // ==========================================
-    const WF_SUGGESTIONS = [
-      "Dagath", "Gauss Prime", "Gauss", "Grendel Prime", "Wisp Prime", "Khora Prime", 
-      "Revenant Prime", "Protea Prime", "Sevagoth Prime", "Xaku Prime", "Rhino Prime",
-      "Nekros Prime", "Mesa Prime", "Volt Prime", "Saryn Prime", "Banshee Prime",
-      "Harrow Prime", "Garuda Prime", "Baruuk Prime", "Hildryn Prime", "Qorvex", "Kullervo",
-      "Dante", "Jade", "Cyte-09", "Torid", "Dorrclave", "Acceltra Prime", "Akarius Prime",
-      "Glaive Prime", "Nikana Prime", "Lex Prime", "Braton Prime", "Orthos Prime"
-    ];
-
-    function initFarmAutocomplete() {
-      const dl = document.getElementById("wf-all-items-datalist");
-      if (!dl) return;
-      dl.innerHTML = WF_SUGGESTIONS.sort().map(item => `<option value="${item}">`).join('');
-    }
-    initFarmAutocomplete();
-
-    let currentFarmTab = 'active';
-
-    function switchFarmTab(tab) {
-      currentFarmTab = tab;
-      document.getElementById('btn-tab-active').style.background = tab === 'active' ? 'var(--gold-primary)' : '#222';
-      document.getElementById('btn-tab-active').style.color = tab === 'active' ? '#111' : '#aaa';
-      document.getElementById('btn-tab-completed').style.background = tab === 'completed' ? 'var(--gold-primary)' : '#222';
-      document.getElementById('btn-tab-completed').style.color = tab === 'completed' ? '#111' : '#aaa';
-      document.getElementById('farm-add-bar').style.display = tab === 'active' ? 'flex' : 'none';
-      ladeFarmTargets();
-    }
-
-    async function ladeFarmTargets() {
-      const grid = document.getElementById('farm-grid');
-      if (!grid) return;
-      const isCompleted = currentFarmTab === 'completed';
-
-      try {
-        const { data: targets, error } = await supabaseClient
-          .from('farm_targets')
-          .select('*')
-          .eq('is_completed', isCompleted);
-
-        if (error || !targets) {
-          grid.innerHTML = '<div style="color: var(--status-red);">Fehler beim Laden der Farm-Ziele.</div>';
-          return;
-        }
-
-        if (targets.length === 0) {
-          grid.innerHTML = `<div style="color: var(--text-dim); grid-column: 1/-1; text-align: center; padding: 20px;">
-            ${isCompleted ? 'Noch keine archivierten Items in der Sammlung.' : 'Keine aktiven Farm-Ziele. Füge oben eins hinzu!'}
-          </div>`;
-          return;
-        }
-
-        targets.forEach(t => {
-          const owned = (t.parts || []).filter(p => p.owned).length;
-          t.progress = t.parts && t.parts.length > 0 ? (owned / t.parts.length) : 0;
         });
-
-        if (!isCompleted) {
-          targets.sort((a, b) => b.progress - a.progress);
-        }
-
-        grid.innerHTML = targets.map(t => {
-          const ownedCount = (t.parts || []).filter(p => p.owned).length;
-          const totalCount = (t.parts || []).length;
-          const percent = Math.round(t.progress * 100);
-          const imgSrc = t.image_url || "https://raw.githubusercontent.com/WFCD/warframe-items/master/data/img/placeholder.png";
-
-          return `
-          <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.08)'}; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                <img src="${imgSrc}" 
-                     style="width: 58px; height: 58px; object-fit: contain; background: rgba(0,0,0,0.5); border-radius: 6px; padding: 4px; border: 1px solid rgba(255,255,255,0.1);" 
-                     alt="${t.item_name}" 
-                     onerror="this.onerror=null; this.src='https://wiki.warframe.com/images/thumb/7/77/Lotus_Symbol.png/64px-Lotus_Symbol.png';">
-                <div>
-                  <div style="font-size: 0.75rem; color: var(--text-dim);">${t.player_name}</div>
-                  <div style="font-weight: bold; font-size: 1.05rem; color: #fff;">${t.item_name}</div>
-                  <div style="font-size: 0.8rem; color: var(--cyan-primary);">${ownedCount}/${totalCount} Teile (${percent}%)</div>
-                </div>
-              </div>
-
-              <div style="width: 100%; height: 5px; background: #222; border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
-                <div style="width: ${percent}%; height: 100%; background: ${percent === 100 ? 'var(--gold-primary)' : 'var(--cyan-primary)'}; transition: width 0.3s;"></div>
-              </div>
-
-              <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px;">
-                ${(t.parts || []).map((p, idx) => {
-                  const bg = p.owned ? '#1b4332' : 'rgba(255, 255, 255, 0.05)';
-                  const border = p.owned ? 'var(--status-green)' : 'rgba(255,255,255,0.15)';
-                  const col = p.owned ? 'var(--status-green)' : 'var(--text-dim)';
-                  return `
-                  <button onclick="toggleFarmPart(${t.id},${idx})" 
-                          style="background: ${bg}; border: 1px solid ${border}; color:${col}; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                    ${p.owned ? '✓ ' : ''}${p.name}
-                  </button>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px;">
-              ${!t.is_completed ? `
-                <button onclick="completeFarmTarget(${t.id})" 
-                        style="background: ${percent === 100 ? 'var(--gold-primary)' : 'transparent'}; 
-                               color: ${percent === 100 ? '#111' : 'var(--text-dim)'}; 
-                               border: 1px solid ${percent === 100 ? 'var(--gold-primary)' : 'rgba(255,255,255,0.2)'}; 
-                               padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer; font-weight: bold;">
-                  ${percent === 100 ? '⭐ Fertig (In Vault)' : 'Archivieren'}
-                </button>
-              ` : `
-                <button onclick="uncompleteFarmTarget(${t.id})" style="background: transparent; color: var(--text-dim); border: 1px solid rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">
-                  Zurück zu Aktiv
-                </button>
-              `}
-              <button onclick="deleteFarmTarget(${t.id})" style="background: transparent; color: var(--status-red); border: none; font-size: 1rem; cursor: pointer;" title="Löschen">🗑️</button>
-            </div>
-          </div>
-          `;
-        }).join('');
+        updateSyndicateConsoleView();
       } catch (e) {
-        console.error("Fehler bei Farm-Zielen:", e);
+        console.error("Fehler bei Syndikats-Rängen:", e);
       }
     }
 
-    async function toggleFarmPart(targetId, partIndex) {
-      const { data: target } = await supabaseClient.from('farm_targets').select('parts').eq('id', targetId).single();
-      if (!target) return;
+    function updateSyndicateConsoleView() {
+      const synId = document.getElementById("syndicate-selector")?.value;
+      if (!synId) return;
 
-      const updatedParts = [...target.parts];
-      updatedParts[partIndex].owned = !updatedParts[partIndex].owned;
+      const r1 = syndicateRanksMap[`nexes92_${synId}`] || 0;
+      const r2 = syndicateRanksMap[`sonofimperator_${synId}`] || 0;
 
-      await supabaseClient.from('farm_targets').update({
-        parts: updatedParts,
-        updated_at: new Date().toISOString()
-      }).eq('id', targetId);
+      const el1 = document.getElementById("syn-rank-nexes");
+      const el2 = document.getElementById("syn-rank-mate");
 
-      ladeFarmTargets();
+      if (el1) el1.innerText = `R${r1}`;
+      if (el2) el2.innerText = `R${r2}`;
     }
 
-    async function completeFarmTarget(targetId) {
-      await supabaseClient.from('farm_targets').update({
-        is_completed: true,
-        updated_at: new Date().toISOString()
-      }).eq('id', targetId);
-      ladeFarmTargets();
-    }
+    async function stepSyndicateRank(playerName, delta) {
+      const synId = document.getElementById("syndicate-selector")?.value;
+      if (!synId) return;
 
-    async function uncompleteFarmTarget(targetId) {
-      await supabaseClient.from('farm_targets').update({
-        is_completed: false,
-        updated_at: new Date().toISOString()
-      }).eq('id', targetId);
-      ladeFarmTargets();
-    }
+      const key = `${playerName.toLowerCase()}_${synId}`;
+      const current = syndicateRanksMap[key] || 0;
+      const newRank = Math.max(0, Math.min(5, current + delta));
 
-    async function deleteFarmTarget(targetId) {
-      if (!confirm('Ziel wirklich löschen?')) return;
-      await supabaseClient.from('farm_targets').delete().eq('id', targetId);
-      ladeFarmTargets();
-    }
+      syndicateRanksMap[key] = newRank;
+      updateSyndicateConsoleView();
 
-    async function addFarmTargetFromInput() {
-      const input = document.getElementById('farm-search-input');
-      const query = input.value.trim();
-      const playerName = document.getElementById('farm-player-select').value;
-      if (!query) return;
-
-      let parts = [];
-      let imageUrl = null;
-      let finalName = query;
-
-      try {
-        const res = await fetch(`https://api.warframestat.us/items/search/${encodeURIComponent(query)}`);
-        if (res.ok) {
-          const items = await res.json();
-          const match = items.find(i => i.name.toLowerCase() === query.toLowerCase()) || items[0];
-
-          if (match) {
-            finalName = match.name;
-            if (match.imageName) {
-              imageUrl = `https://cdn.warframestat.us/img/${match.imageName}`;
-            }
-            if (match.components && match.components.length > 0) {
-              parts = match.components
-                .filter(c => !c.name.toLowerCase().includes("orokin-zelle") && !c.name.toLowerCase().includes("argon"))
-                .map(c => ({ name: c.name, owned: false }));
-            }
-          }
-        }
-      } catch (e) {
-        console.warn("API Fehler, nutze Standard-Teile:", e);
-      }
-
-      if (parts.length === 0) {
-        const isWeapon = query.toLowerCase().includes("torid") || query.toLowerCase().includes("lex") || 
-                         query.toLowerCase().includes("braton") || query.toLowerCase().includes("orthos") ||
-                         query.toLowerCase().includes("glaive") || query.toLowerCase().includes("acceltra") ||
-                         query.toLowerCase().includes("dorrclave");
-
-        if (isWeapon) {
-          parts = [
-            { name: "Blaupause", owned: false },
-            { name: "Lauf / Klinge", owned: false },
-            { name: "Gehäuse / Griff", owned: false }
-          ];
-        } else {
-          parts = [
-            { name: "Blaupause", owned: false },
-            { name: "Chassis", owned: false },
-            { name: "Neuroptik", owned: false },
-            { name: "Systeme", owned: false }
-          ];
-        }
-      }
-
-      await supabaseClient.from('farm_targets').insert([{
+      await supabaseClient.from('syndicate_ranks').upsert({
         player_name: playerName,
-        item_name: finalName,
-        image_url: imageUrl,
-        parts: parts,
-        is_completed: false
-      }]);
-
-      input.value = '';
-      ladeFarmTargets();
+        syndicate_id: synId,
+        rank: newRank,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'player_name,syndicate_id' });
     }
 
     // ==========================================
     // INITIALISIERUNG
     // ==========================================
     async function initDashboard() {
-      try { await ladeDashboardDaten(); } catch (e) { console.error("Init Error 1:", e); }
-      try { await ladeDuoMondfleisch(); } catch (e) { console.error("Init Error 2:", e); }
-      try { await ladeWeeklyChecklist(); } catch (e) { console.error("Init Error 3:", e); }
-      try { await ladeSyndikatsMatrix(); } catch (e) { console.error("Init Error 4:", e); }
-      try { await ladeFarmTargets(); } catch (e) { console.error("Init Error 5:", e); }
-      try { await ladeDojoForschungen(); } catch (e) { console.error("Init Error 6:", e); }
-      ladeWorldstateDaten();
+      try { await ladeDashboardDaten(); } catch (e) {}
+      try { await ladeFarmTargets(); } catch (e) {}
+      try { await ladeDuoMondfleisch(); } catch (e) {}
+      try { await initSyndicateConsole(); } catch (e) {}
+      ladeDuviriIncarnonRotation();
+      renderSpIncursionsUI();
     }
 
     initDashboard();
