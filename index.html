@@ -920,12 +920,6 @@
       const idxFrame = (((5 + diffWochen) % 11) + 11) % 11;
       const frames = DUVIRI_FRAMES_WEEKS[idxFrame];
 
-      // Normaler Frame-Zyklus (11er-Zyklus)
-      const basisFrame = new Date("2024-01-08T00:00:00Z").getTime();
-      const wochenFrame = Math.floor((jetzt - basisFrame) / (7 * 24 * 60 * 60 * 1000));
-      const idxFrame = ((wochenFrame % 11) + 11) % 11;
-      const frames = DUVIRI_FRAMES_WEEKS[idxFrame];
-
       if (weekInfo) {
         weekInfo.innerHTML = `<span style="color:var(--cyan-primary);">Frames: W${idxFrame + 1}/11</span> &bull; <span style="color:var(--gold-primary);">Incarnons: W${rotInc.w}/8</span>`;
       }
